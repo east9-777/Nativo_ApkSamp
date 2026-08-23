@@ -49,7 +49,8 @@ NetGame::NetGame(const char* host, int port, const char* playerName, const char*
 	memset(m_host, 0, 256);
 
 	strcpy(m_hostName, "SA-MP");
-	strncpy(m_host, host, sizeof(m_host));
+	strncpy(m_host, host, sizeof(m_host) - 1);
+	m_host[sizeof(m_host) - 1] = '\0';
 	m_port = port;
 
 	m_rakClient = RakNetworkFactory::GetRakClientInterface();

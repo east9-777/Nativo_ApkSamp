@@ -351,6 +351,10 @@ public class Utils {
 
         try {
             File file = new File(ctx.getExternalFilesDir(null), "SAMP/settings.json");
+            File parent = file.getParentFile();
+            if (parent == null || (!parent.exists() && !parent.mkdirs())) {
+                throw new IOException("Could not create settings directory: " + file.getParent());
+            }
 
             if (file.exists()) {
                 file.delete();
@@ -586,10 +590,14 @@ public class Utils {
     }
 
     public static void writeJSONToFile(File file, JSONObject json) throws IOException, JSONException {
-        BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-        bw.write(json.toString(4));
-        bw.write(System.lineSeparator());
-        bw.close();
+        File parent = file.getParentFile();
+        if (parent != null && !parent.exists() && !parent.mkdirs()) {
+            throw new IOException("Could not create directory: " + parent);
+        }
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+            bw.write(json.toString(4));
+            bw.write(System.lineSeparator());
+        }
     }
 
     public static String getStringOutputByURL(final String url) throws IOException {

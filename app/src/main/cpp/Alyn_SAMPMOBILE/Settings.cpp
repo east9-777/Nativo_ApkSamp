@@ -3,6 +3,7 @@
 
 #include <rapidjson/document.h>
 #include <rapidjson/filereadstream.h>
+#include <sys/stat.h>
 
 bool Settings::m_initialized = false;
 
@@ -44,7 +45,11 @@ void Settings::initialize()
 
 	FILE* settings_json_file = fopen(settings_json_path, "rb");
 	if (settings_json_file == nullptr) {
-		spdlog::error("Failed to initialize settings. (settings file null)");
+		// Java normally creates this file when the user presses Connect.
+		// Keep safe defaults if it is genuinely unavailable, but make the
+		// failure explicit instead of pretending that the selected server was
+		// loaded.
+		spdlog::error("Failed to initialize settings. (settings file null): {}", settings_json_path);
 		return;
 	}
 
@@ -53,15 +58,38 @@ void Settings::initialize()
 
 	rapidjson::Document settings_json;
 	settings_json.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(fileReadStream);
+	if (settings_json.HasParseError() || !settings_json.IsObject() ||
+		!settings_json.HasMember("client") || !settings_json["client"].IsObject()) {
+		spdlog::error("Failed to initialize settings. (invalid JSON)");
+		fclose(settings_json_file);
+		return;
+	}
 
 	// server
-	strcpy(m_host, settings_json["client"]["server"]["host"].GetString());
-	m_port = settings_json["client"]["server"]["port"].GetInt();
-	strcpy(m_pass, settings_json["client"]["server"]["password"].GetString());
+	auto& client = settings_json["client"];
+	if (!client.HasMember("server") || !client["server"].IsObject() ||
+		!client.HasMember("settings") || !client["settings"].IsObject()) {
+		spdlog::error("Failed to initialize settings. (missing client sections)");
+		fclose(settings_json_file);
+		return;
+	}
+	auto& server = client["server"];
+	auto& settings = client["settings"];
+	if (!server.HasMember("host") || !server["host"].IsString() ||
+		!server.HasMember("port") || !server["port"].IsInt() ||
+		!server.HasMember("password") || !server["password"].IsString() ||
+		!settings.HasMember("nick_name") || !settings["nick_name"].IsString()) {
+		spdlog::error("Failed to initialize settings. (missing server settings)");
+		fclose(settings_json_file);
+		return;
+	}
+	snprintf(m_host, sizeof(m_host), "%s", server["host"].GetString());
+	m_port = server["port"].GetInt();
+	snprintf(m_pass, sizeof(m_pass), "%s", server["password"].GetString());
 
 	// settings
-	strcpy(m_nick, settings_json["client"]["settings"]["nick_name"].GetString());
-	m_sampversion = settings_json["client"]["settings"]["samp_version"].GetInt();
+	snprintf(m_nick, sizeof(m_nick), "%s", settings["nick_name"].GetString());
+	m_sampversion = settings.HasMember("samp_version") && settings["samp_version"].IsInt() ? settings["samp_version"].GetInt() : 0;
 	// m_newinterface = settings_json["client"]["settings"]["new_interface"].GetBool();
 	m_systemkeyboard = settings_json["client"]["settings"]["system_keyboard"].GetBool();
 	m_timestamp = settings_json["client"]["settings"]["timestamp"].GetBool();

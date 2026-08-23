@@ -151,6 +151,7 @@ public class UpdateService extends Service {
                         Log.i("UpdateService", "mUpdateVersion = " + mUpdateVersion);
 
                         mUpdateFiles = new ArrayList<>();
+                        mUpdateArchives = new ArrayList<>();
 
                         mGameStatus = UpdateActivity.GameStatus.Undefined;
                         Message outMsg = Message.obtain(mInHandler, 10);
@@ -378,6 +379,24 @@ public class UpdateService extends Service {
         mDownloadFailedOffset = 0;
 
         downloadArchives();
+
+        // Do not start the game with an incomplete data package. The old
+        // implementation continued to updateGame() after a failed archive
+        // download, leaving the native client without its required files.
+        if (!mUpdateArchives.isEmpty()) {
+            Log.e("UpdateService", "Um ou mais archives não foram baixados.");
+            mDownloadingStatus = false;
+            Message errorMsg = Message.obtain(mInHandler, 9);
+            errorMsg.replyTo = mMessenger;
+            if (mActivityMessenger != null) {
+                try {
+                    mActivityMessenger.send(errorMsg);
+                } catch (RemoteException e) {
+                    Log.e("UpdateService", "Não foi possível informar erro de download", e);
+                }
+            }
+            return;
+        }
 
         final ArrayList<FileData> tempUpdateFiles = new ArrayList<>(mUpdateFiles);
         mUpdateFiles.clear();

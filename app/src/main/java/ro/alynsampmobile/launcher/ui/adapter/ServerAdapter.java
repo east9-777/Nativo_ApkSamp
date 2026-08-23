@@ -165,12 +165,6 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder
                     return;
                 }
 
-                if (!Utils.appStatus()) {
-                    dialog.dismiss();
-                    Utils.showAppStatusWarning(activity);
-                    return;
-                }
-
                 if (nickname_input_text.getText().toString().isEmpty()) {
                     Toast.makeText(activity, "Please set nickname.", Toast.LENGTH_LONG).show();
                     return;
