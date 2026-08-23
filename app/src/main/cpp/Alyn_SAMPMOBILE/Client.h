@@ -23,6 +23,7 @@
 #include <SymUtils.h>
 #include <SA.h>
 #include <RenderWare/rw.h>
+#include <Encoding.h>
 #include <obfuscator.h>
 
 #include "Addr.h"

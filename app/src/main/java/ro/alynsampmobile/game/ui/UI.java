@@ -8,6 +8,7 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.joom.paranoid.Obfuscate;
 
 import java.io.UnsupportedEncodingException;
@@ -92,6 +93,7 @@ public class UI implements ButtonPanel.Listener, Voice.Listener, Dialog.Listener
     }
 
     public void exitGame() {
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false);
         samp.finishAndRemoveTask();
         System.exit(0);
     }

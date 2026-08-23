@@ -169,32 +169,9 @@ public class SplashActivity extends AppCompatActivity implements GLSurfaceView.R
             return;
         }
 
-        if (!getSharedPreferences("samp_settings", Context.MODE_PRIVATE).getString("files_type", "none").equals("lite") &&
-                !getSharedPreferences("samp_settings", Context.MODE_PRIVATE).getString("files_type", "none").equals("full")) {
-            View view = getLayoutInflater().inflate(R.layout.layout_files_selection, null);
-
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this).setView(view);
-            filesSelectionDialog = dialogBuilder.create();
-
-            MaterialButton lite = view.findViewById(R.id.lite_button);
-            MaterialButton full = view.findViewById(R.id.full_button);
-
-            lite.setOnClickListener(v -> {
-                getSharedPreferences("samp_settings", Context.MODE_PRIVATE).edit().putString("files_type", "lite").apply();
-                dismissDialog();
-                new Handler().postDelayed(() -> bindService(new Intent(this, UpdateService.class), mConnection, Context.BIND_AUTO_CREATE), 2500);
-            });
-
-            full.setOnClickListener(v -> {
-                getSharedPreferences("samp_settings", Context.MODE_PRIVATE).edit().putString("files_type", "full").apply();
-                dismissDialog();
-                new Handler().postDelayed(() -> bindService(new Intent(this, UpdateService.class), mConnection, Context.BIND_AUTO_CREATE), 2500);
-            });
-
-            filesSelectionDialog.show();
-        } else {
-            new Handler().postDelayed(() -> bindService(new Intent(this, UpdateService.class), mConnection, Context.BIND_AUTO_CREATE), 2500);
-        }
+        // Selecao Lite/Full removida: sempre usamos um unico pacote de dados completo.
+        getSharedPreferences("samp_settings", Context.MODE_PRIVATE).edit().putString("files_type", "full").apply();
+        new Handler().postDelayed(() -> bindService(new Intent(this, UpdateService.class), mConnection, Context.BIND_AUTO_CREATE), 2500);
     }
 
     private void dismissDialog() {
@@ -306,9 +283,11 @@ public class SplashActivity extends AppCompatActivity implements GLSurfaceView.R
                 UpdateActivity.GameStatus gameStatus = UpdateActivity.GameStatus.valueOf(message.getData().getString("status", ""));
                 Log.i("SplashActivity", "gameStatus = " + gameStatus);
 
-                if (!Utils.appStatus()) {
-                    Utils.showAppStatusWarning(SplashActivity.this);
-                } else {
+                // Removida a checagem de Utils.appStatus() aqui: era uma segunda chamada de rede
+                // redundante (o update.json ja tinha sido lido no checkUpdate()) e travava o app
+                // com "App server is down" sempre que essa segunda chamada falhava por qualquer
+                // motivo, mesmo com o resto funcionando.
+                {
                     if (gameStatus == UpdateActivity.GameStatus.GameUpdateRequired && !Utils.isTester(SplashActivity.this)) {
                         try {
                             new AlertDialog.Builder(SplashActivity.this)

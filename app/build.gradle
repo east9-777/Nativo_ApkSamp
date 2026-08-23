@@ -1,6 +1,8 @@
 plugins {
     id "com.android.application"
     id "com.joom.paranoid"
+    id "com.google.gms.google-services"
+    id "com.google.firebase.crashlytics"
 }
 
 android {
@@ -30,10 +32,6 @@ android {
 
     buildTypes {
         release {
-            // This source does not include a private release keystore.
-            // The runner's automatically generated debug key makes the
-            // GitHub Actions artifact installable for testing.
-            signingConfig signingConfigs.debug
             minifyEnabled true
             shrinkResources true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -84,6 +82,9 @@ dependencies {
     implementation(libs.ssp.android)
 
     implementation(libs.paranoid.gradle.plugin)
+
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics.ndk)
 
     implementation(libs.applovin.sdk)
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Deps/Bass/bass.h"
+#include "../Deps/Bass/Bass.h"
 
 #include "Channel.h"
 

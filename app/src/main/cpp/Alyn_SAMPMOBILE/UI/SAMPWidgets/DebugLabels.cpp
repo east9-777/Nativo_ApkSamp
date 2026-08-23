@@ -1,7 +1,7 @@
 #include "../UI.h"
 #include "../../Client.h"
-#include "../../Game/Game.h"
-#include "../../Net/NetGame.h"
+#include "../../game/Game.h"
+#include "../../net/NetGame.h"
 
 extern UI* pUI;
 extern Game* pGame;

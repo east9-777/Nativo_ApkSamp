@@ -1,8 +1,8 @@
-#include "../Deps/Bass/bass.h"
+#include "../Deps/Bass/Bass.h"
 #include <opus.h>
 
-#include "../Game/Common.h"
-#include "../Game/Game.h"
+#include "../game/Common.h"
+#include "../game/Game.h"
 
 #include "Playback.h"
 

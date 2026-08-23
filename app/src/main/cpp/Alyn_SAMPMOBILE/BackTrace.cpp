@@ -1,4 +1,5 @@
 #include "BackTrace.h"
+#include "Crashlytics.h"
 
 #include <spdlog/spdlog.h>
 #include <android/log.h>
@@ -18,6 +19,7 @@ void crash_log(const char* format, ...)
 	va_end(args);
 
 	spdlog::error("{}", buffer);
+	firebase::crashlytics::Log(buffer);
 }
 
 void logDeviceInfo()

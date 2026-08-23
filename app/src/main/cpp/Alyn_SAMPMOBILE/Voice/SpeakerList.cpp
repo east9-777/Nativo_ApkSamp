@@ -1,10 +1,10 @@
 #include "../Client.h"
 #include "../UI/UI.h"
-#include "../Game/Common.h"
-#include "../Game/Util.h"
-#include "../Game/Game.h"
-#include "../Game/PlayerPed.h"
-#include "../Net/NetGame.h"
+#include "../game/Common.h"
+#include "../game/Util.h"
+#include "../game/Game.h"
+#include "../game/PlayerPed.h"
+#include "../net/NetGame.h"
 
 #include "SpeakerList.h"
 

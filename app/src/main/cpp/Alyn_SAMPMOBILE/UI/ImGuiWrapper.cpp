@@ -1,7 +1,7 @@
 #include "ImGuiWrapper.h"
 #include "UISettings.h"
-#include "../Game/Game.h"
-#include "../Net/NetGame.h"
+#include "../game/Game.h"
+#include "../net/NetGame.h"
 
 extern NetGame* pNetGame;
 
