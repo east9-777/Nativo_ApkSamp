@@ -11,7 +11,7 @@ constraintlayout = "2.2.0"
 navigationUi = "2.8.6"
 okhttp = "4.12.0"
 paranoidGradlePlugin = "0.3.14"
-prdownloader = "0.6.0"
+prdownloader = "1.0.2"
 sdpAndroid = "1.1.1"
 sspAndroid = "1.1.1"
 swiperefreshlayout = "1.1.0"
@@ -31,7 +31,7 @@ navigation-fragment = { module = "androidx.navigation:navigation-fragment", vers
 navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "navigationUi" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 paranoid-gradle-plugin = { module = "com.joom.paranoid:paranoid-gradle-plugin", version.ref = "paranoidGradlePlugin" }
-prdownloader = { module = "com.mindorks.android:prdownloader", version.ref = "prdownloader" }
+prdownloader = { module = "com.github.amitshekhariitbhu:PRDownloader", version.ref = "prdownloader" }
 sdp-android = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroid" }
 ssp-android = { module = "com.intuit.ssp:ssp-android", version.ref = "sspAndroid" }
 swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
