@@ -24,6 +24,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.CharacterIterator;
@@ -46,10 +52,12 @@ import ro.alynsampmobile.launcher.ui.fragment.SupportPageFragment;
 @Obfuscate
 public class Utils {
     public static String copyright = "Copyright © Alyn_SAMPMOBILE";
-    public static String web = "https://alynsampmobile.pro/";
-    public static String github = "https://github.com/alyn-dev";
+    // TODO: troque SEU_USUARIO e SEU_REPO pelo seu usuario e nome do repositorio no GitHub
+    public static String web = "https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPO/main/";
+    public static String github = "https://github.com/SEU_USUARIO";
     public static String update = web + "update.json";
-    public static String discord = web + "discord";
+    // TODO: coloque aqui o link de convite real do seu servidor Discord (ex: https://discord.gg/xxxxxxx)
+    public static String discord = "https://discord.gg/SEU_CONVITE";
     public static String changelog = web + "changelog.txt";
     public static String hostedServersFileStr = web + "servers.json";
     public static String bannedServersFileStr = web + "banned.json";
@@ -593,5 +601,49 @@ public class Utils {
             ci.next();
         }
         return String.format("%.1f %cB", bytes / 1000.0, ci.current());
+    }
+
+    /**
+     * Descompacta um .zip inteiro dentro de destDir, recriando as subpastas
+     * que existirem dentro do zip. Usado para pacotes grandes (ex: texdb)
+     * baixados como um unico arquivo em vez de arquivo por arquivo.
+     *
+     * Protege contra "zip slip" (entradas maliciosas tentando escrever fora
+     * de destDir usando "../").
+     */
+    public static void extractZip(File zipFile, File destDir) throws IOException {
+        if (!destDir.exists()) destDir.mkdirs();
+
+        String destDirCanonicalPath = destDir.getCanonicalPath();
+
+        try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)))) {
+            ZipEntry entry;
+            byte[] buffer = new byte[8192];
+
+            while ((entry = zis.getNextEntry()) != null) {
+                File outFile = new File(destDir, entry.getName());
+
+                String outFileCanonicalPath = outFile.getCanonicalPath();
+                if (!outFileCanonicalPath.startsWith(destDirCanonicalPath + File.separator) && !outFileCanonicalPath.equals(destDirCanonicalPath)) {
+                    throw new IOException("Entrada de zip fora do diretório de destino: " + entry.getName());
+                }
+
+                if (entry.isDirectory()) {
+                    outFile.mkdirs();
+                    continue;
+                }
+
+                File parent = outFile.getParentFile();
+                if (parent != null && !parent.exists()) parent.mkdirs();
+
+                try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outFile))) {
+                    int len;
+                    while ((len = zis.read(buffer)) != -1) {
+                        bos.write(buffer, 0, len);
+                    }
+                }
+                zis.closeEntry();
+            }
+        }
     }
 }

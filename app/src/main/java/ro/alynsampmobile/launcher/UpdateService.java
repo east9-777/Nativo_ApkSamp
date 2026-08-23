@@ -36,6 +36,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import ro.alynsampmobile.launcher.utils.ArchiveData;
 import ro.alynsampmobile.launcher.utils.FileData;
 import ro.alynsampmobile.launcher.utils.Utils;
 
@@ -50,6 +51,7 @@ public class UpdateService extends Service {
 
     public boolean mDownloadingStatus = false;
     public ArrayList<FileData> mUpdateFiles = new ArrayList<>();
+    public ArrayList<ArchiveData> mUpdateArchives = new ArrayList<>();
     public long mUpdateFilesSizeTotal = 0;
     public int mDownloadFailedOffset;
 
@@ -165,6 +167,7 @@ public class UpdateService extends Service {
                         String samp_data_url = data.getString("samp_list_url");
 
                         checkGameFilesUpdate(data_url, samp_data_url);
+                        checkArchivesUpdate(data_url);
 
                         if (!isGamePackageExists()) {
                             mGameStatus = UpdateActivity.GameStatus.GameUpdateRequired;
@@ -303,6 +306,36 @@ public class UpdateService extends Service {
         }
     }
 
+    public void checkArchivesUpdate(String list_url) throws Exception {
+        Log.d("UpdateService", "checkArchivesUpdate");
+
+        String data_str = Utils.getStringOutputByURL(list_url);
+        JSONObject data_json = new JSONObject(data_str);
+        ArrayList<ArchiveData> archiveList = ArchiveData.getListByJson(data_json);
+
+        for (ArchiveData archiveData : archiveList) {
+            File destDir = new File(getExternalFilesDir(null), archiveData.getPath());
+            File marker = new File(destDir, ".archive_" + archiveData.getName() + ".done");
+
+            boolean alreadyInstalled = false;
+            if (marker.exists()) {
+                try {
+                    String content = Utils.readJSONFromFile(marker);
+                    if (content != null && content.trim().equals(String.valueOf(archiveData.getSize()))) {
+                        alreadyInstalled = true;
+                    }
+                } catch (IOException ignored) {
+                }
+            }
+
+            if (!alreadyInstalled) {
+                Log.i("UpdateService", "Archive pendente: " + archiveData.getName() + " -> " + archiveData.getPath());
+                mUpdateArchives.add(archiveData);
+                mUpdateFilesSizeTotal += archiveData.getSize();
+            }
+        }
+    }
+
     public void setUpdateStatus(UpdateActivity.UpdateStatus status) {
         if (!(status.name().isEmpty()) && mUpdateStatus != status) {
             mUpdateStatus = status;
@@ -342,6 +375,9 @@ public class UpdateService extends Service {
     private void downloadGameFiles() {
         Log.i("UpdateService", "Download Game Files");
         mDownloadFailedOffset = 0;
+
+        downloadArchives();
+
         final ArrayList<FileData> tempUpdateFiles = new ArrayList<>(mUpdateFiles);
         mUpdateFiles.clear();
         final Ref.IntRef i = new Ref.IntRef();
@@ -422,6 +458,74 @@ public class UpdateService extends Service {
         updateGame();
     }
 
+    private void downloadArchives() {
+        if (mUpdateArchives.isEmpty()) return;
+
+        final ArrayList<ArchiveData> tempArchives = new ArrayList<>(mUpdateArchives);
+        mUpdateArchives.clear();
+
+        for (int idx = 0; idx < tempArchives.size(); idx++) {
+            final ArchiveData archiveData = tempArchives.get(idx);
+            Log.i("UpdateService", "Baixando archive: " + archiveData.getName() + " -> " + archiveData.getUrl());
+
+            File tmpDir = new File(getExternalFilesDir(null), "tmp_archives");
+            if (!tmpDir.exists()) tmpDir.mkdirs();
+            final File zipFile = new File(tmpDir, archiveData.getName() + ".zip");
+            if (zipFile.exists()) zipFile.delete();
+
+            mDownloadingStatus = true;
+            sendLoadingScreen(false, archiveData.getName() + ".zip", 0, archiveData.getSize());
+
+            PRDownloader.download(archiveData.getUrl(), tmpDir.toString(), archiveData.getName() + ".zip").build().
+                    setOnProgressListener(progress -> sendLoadingScreen(false, archiveData.getName() + ".zip", progress.currentBytes, archiveData.getSize())).
+                    start(new OnDownloadListener() {
+                        @Override
+                        public void onDownloadComplete() {
+                            mDownloadingStatus = false;
+                        }
+
+                        @Override
+                        public void onError(Error error) {
+                            mDownloadingStatus = false;
+                            Log.e("UpdateService", "Falha ao baixar archive " + archiveData.getName());
+                            // Devolve pra fila pra tentar de novo na proxima checagem de update.
+                            mUpdateArchives.add(archiveData);
+                        }
+                    });
+
+            while (mDownloadingStatus) {
+                try {
+                    Thread.sleep(30);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (!zipFile.exists()) continue; // download falhou, ja foi re-enfileirado acima
+
+            try {
+                sendLoadingScreen(true, archiveData.getName(), 0, archiveData.getSize());
+
+                File destDir = new File(getExternalFilesDir(null), archiveData.getPath());
+                Utils.extractZip(zipFile, destDir);
+
+                File marker = new File(destDir, ".archive_" + archiveData.getName() + ".done");
+                try (java.io.Writer w = new java.io.FileWriter(marker)) {
+                    w.write(String.valueOf(archiveData.getSize()));
+                }
+
+                Log.i("UpdateService", "Archive extraido com sucesso: " + archiveData.getName());
+            } catch (IOException e) {
+                Log.e("UpdateService", "Falha ao descompactar " + archiveData.getName() + ": " + e.getMessage());
+                mUpdateArchives.add(archiveData); // tenta de novo na proxima
+            } finally {
+                zipFile.delete();
+            }
+        }
+
+        sendLoadingScreen(false, "", 0, 0);
+    }
+
     private void sendLoadingScreen(final boolean unpacking, final String fileName, final long current, final long total) {
         new Thread(() -> {
             Message outMsg = Message.obtain(mInHandler, 4);
@@ -444,6 +548,6 @@ public class UpdateService extends Service {
 
     public boolean isGameFilesUpdateExists() {
         Log.i("UpdateService", "isGameFilesUpdateExists");
-        return !mUpdateFiles.isEmpty();
+        return !mUpdateFiles.isEmpty() || !mUpdateArchives.isEmpty();
     }
 }
