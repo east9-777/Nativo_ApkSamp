@@ -1026,4 +1026,4 @@ extern int (*BASS_ChannelSet3DAttributes) (uint32_t, int, float, float, int, int
 extern int (*BASS_ChannelSet3DPosition) (uint32_t, const BASS_3DVECTOR*, const BASS_3DVECTOR*, const BASS_3DVECTOR*);
 extern int (*BASS_SetVolume) (float);
 
-void LoadBassLibrary();
+bool LoadBassLibrary();

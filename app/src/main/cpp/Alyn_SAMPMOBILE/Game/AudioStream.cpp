@@ -54,6 +54,11 @@ bool AudioStream::Initialize()
 
 	bassStream = 0;
 
+	if (!BASS_Init || !BASS_Free) {
+		spdlog::error("AudioStream disabled: BASS library is unavailable");
+		return false;
+	}
+
 	BASS_Free();
 	if (!BASS_Init(-1, 44100, 0)) return false;
 

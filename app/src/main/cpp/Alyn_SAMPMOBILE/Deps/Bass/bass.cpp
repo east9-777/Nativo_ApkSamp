@@ -40,14 +40,16 @@ int (*BASS_ChannelSet3DAttributes) (uint32_t, int, float, float, int, int, float
 int (*BASS_ChannelSet3DPosition) (uint32_t, const BASS_3DVECTOR*, const BASS_3DVECTOR*, const BASS_3DVECTOR*);
 int (*BASS_SetVolume) (float);
 
-void LoadBassLibrary()
+bool LoadBassLibrary()
 {
 	spdlog::info("Loading BASS library..");
-    void* v0 = dlopen("libBASS.so", RTLD_LAZY);
+    // Android file names are case-sensitive. The packaged library is
+    // libbass.so, so looking for libBASS.so always fails.
+    void* v0 = dlopen("libbass.so", RTLD_LAZY);
 
 	if (!v0) {
 		spdlog::info(dlerror());
-		return;
+		return false;
 	}
 
 	BASS_Init = (int (*)(uint32_t, uint32_t, uint32_t))dlsym(v0, "BASS_Init");
@@ -86,4 +88,22 @@ void LoadBassLibrary()
 	BASS_ChannelSet3DAttributes = (int (*)(uint32_t, int, float, float, int, int, float))dlsym(v0, "BASS_ChannelSet3DAttributes");
 	BASS_ChannelSet3DPosition = (int (*)(uint32_t, const BASS_3DVECTOR*, const BASS_3DVECTOR*, const BASS_3DVECTOR*))dlsym(v0, "BASS_ChannelSet3DPosition");
 	BASS_SetVolume = (int (*)(float))dlsym(v0, "BASS_SetVolume");
+
+	if (!BASS_Init || !BASS_Free || !BASS_SetConfigPtr || !BASS_SetConfig ||
+		!BASS_ChannelStop || !BASS_StreamCreateURL || !BASS_ChannelPlay ||
+		!BASS_StreamFree) {
+		spdlog::error("BASS library is missing required symbols");
+		BASS_Init = nullptr;
+		BASS_Free = nullptr;
+		BASS_SetConfigPtr = nullptr;
+		BASS_SetConfig = nullptr;
+		BASS_ChannelStop = nullptr;
+		BASS_StreamCreateURL = nullptr;
+		BASS_ChannelPlay = nullptr;
+		BASS_StreamFree = nullptr;
+		dlclose(v0);
+		return false;
+	}
+
+	return true;
 }
