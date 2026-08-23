@@ -1,4 +1,4 @@
-#include "../Deps/Bass/Bass.h"
+#include "../Deps/Bass/bass.h"
 #include <opus.h>
 
 #include "Record.h"
