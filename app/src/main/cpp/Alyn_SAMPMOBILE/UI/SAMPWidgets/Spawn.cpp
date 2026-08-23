@@ -1,6 +1,6 @@
 #include "../UI.h"
-#include "../../game/Game.h"
-#include "../../net/NetGame.h"
+#include "../../Game/Game.h"
+#include "../../Net/NetGame.h"
 
 extern NetGame* pNetGame;
 
