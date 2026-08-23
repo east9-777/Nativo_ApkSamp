@@ -106,11 +106,6 @@ void Client::initialize(const std::string& gameDir, bool offlineMode)
 
 	Settings::initialize();
 
-	if (firebase::crashlytics::Initialize()) {
-		spdlog::info("Crashlytics initialized");
-		firebase::crashlytics::SetUserId(Settings::nick());
-	}
-
 	if (Settings::sampversion() == 0) {
 		samp_version = "0.3.7";
 	}
@@ -132,7 +127,7 @@ void Client::initialize(const std::string& gameDir, bool offlineMode)
 
 	char str[100];
 	sprintf(str, "0x%llx", g_saSym->GetLibAddr());
-	firebase::crashlytics::SetCustomKey("libGTASA.so", str);
+spdlog::info("libGTASA.so base address: {}", str);
 
 	sa::Initialize();
 	LoadBassLibrary();
