@@ -42,6 +42,7 @@ import ro.alynsampmobile.launcher.utils.Utils;
 
 @Obfuscate
 public class UpdateService extends Service {
+    private volatile long lastLoadingScreenMessageAt;
     public Messenger mMessenger;
     public IncomingHandler mInHandler;
     public Messenger mActivityMessenger;
@@ -527,23 +528,30 @@ public class UpdateService extends Service {
     }
 
     private void sendLoadingScreen(final boolean unpacking, final String fileName, final long current, final long total) {
-        new Thread(() -> {
-            Message outMsg = Message.obtain(mInHandler, 4);
-            outMsg.getData().putString(NotificationCompat.CATEGORY_STATUS, UpdateActivity.UpdateStatus.CheckUpdate.name());
-            outMsg.getData().putBoolean("withProgress", true);
-            outMsg.getData().putString("filename", fileName);
-            outMsg.getData().putBoolean("unpacking", unpacking);
-            outMsg.getData().putLong("current", current);
-            outMsg.getData().putLong("total", total);
-            outMsg.replyTo = mMessenger;
-            if (mActivityMessenger != null) {
-                try {
-                    mActivityMessenger.send(outMsg);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+        long now = System.currentTimeMillis();
+        boolean completed = total > 0 && current >= total;
+        // PRDownloader can report progress hundreds of times per second.
+        // Limit UI messages while always allowing the first and final update.
+        if (!completed && current > 0 && now - lastLoadingScreenMessageAt < 250) {
+            return;
+        }
+        lastLoadingScreenMessageAt = now;
+
+        Message outMsg = Message.obtain(mInHandler, 4);
+        outMsg.getData().putString(NotificationCompat.CATEGORY_STATUS, UpdateActivity.UpdateStatus.DownloadGameFiles.name());
+        outMsg.getData().putBoolean("withProgress", true);
+        outMsg.getData().putString("filename", fileName);
+        outMsg.getData().putBoolean("unpacking", unpacking);
+        outMsg.getData().putLong("current", current);
+        outMsg.getData().putLong("total", total);
+        outMsg.replyTo = mMessenger;
+        if (mActivityMessenger != null) {
+            try {
+                mActivityMessenger.send(outMsg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
-        }).start();
+        }
     }
 
     public boolean isGameFilesUpdateExists() {

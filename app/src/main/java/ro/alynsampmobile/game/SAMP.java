@@ -112,13 +112,16 @@ public class SAMP extends GTASA {
         ui = new UI(this);
         ui.initializeUI();
 
-        // check signature
+        /*
+         * Do not abort the game when the APK is signed with a different key.
+         * Every locally rebuilt APK has a different certificate from the
+         * original release, which used to make the activity finish immediately
+         * after the native libraries were loaded.
+         */
         if (!SignatureChecker.isSignatureValid(this, getPackageName())) {
-            Log.e("SplashActivity", "No remake idiot!");
-            finish();
-            return;
+            Log.w(TAG, "APK signature differs from the original release; continuing with this build.");
         } else {
-            Log.i("SplashActivity", "Using original client!");
+            Log.i(TAG, "Original release signature detected.");
         }
 
         String gameDir = getExternalFilesDir(null).toString().concat("/");

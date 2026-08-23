@@ -142,7 +142,11 @@ public class Utils {
             try {
                 String out = getStringOutputByURL(update);
                 JSONObject json = new JSONObject(out);
-                JSONArray testers = json.getJSONArray("app_testers");
+                // Older update.json files do not contain this optional field.
+                JSONArray testers = json.optJSONArray("app_testers");
+                if (testers == null) {
+                    testers = new JSONArray();
+                }
 
                 String hwid = getHWID(context);
                 for (int i = 0; i < testers.length(); i++) {
@@ -480,9 +484,16 @@ public class Utils {
     public static void deleteServerFromFavorites(Context ctx, String address) throws Exception {
         File serversFile = new File(ctx.getExternalFilesDir(null), "servers.json");
 
+        if (!serversFile.exists() || serversFile.length() == 0) {
+            return;
+        }
+
         String jsonString = readJSONFromFile(serversFile);
         JSONObject json = new JSONObject(jsonString);
-        JSONArray serversArray = json.getJSONArray("servers");
+        JSONArray serversArray = json.optJSONArray("servers");
+        if (serversArray == null) {
+            return;
+        }
 
         JSONArray newServersArray = new JSONArray();
         String[] parts = address.split(":");
@@ -533,7 +544,14 @@ public class Utils {
         try {
             String jsonString = getStringOutputByURL(bannedServersFileStr);
             JSONObject json = new JSONObject(jsonString);
-            JSONArray serversArray = json.getJSONArray("banned_servers");
+            // Treat a missing/legacy ban list as an empty list.
+            JSONArray serversArray = json.optJSONArray("banned_servers");
+            if (serversArray == null) {
+                serversArray = json.optJSONArray("banned");
+            }
+            if (serversArray == null) {
+                serversArray = new JSONArray();
+            }
 
             for (int i = 0; i < serversArray.length(); i++) {
                 JSONObject serverJson = serversArray.getJSONObject(i);
