@@ -8,7 +8,7 @@ Released publicly and for free by the author. If you paid someone for this sourc
 
 ## What was removed before release
 
-- The signing keystore (`key.jks`) and its signing config — release builds are **unsigned**; set up your own signing.
+- The private signing keystore (`key.jks`) — the GitHub test build uses the runner's debug key instead.
 - Firebase/Crashlytics integration — removed from this build profile so it compiles
   without a project-specific `google-services.json`. The native crash logger still
   writes diagnostic information to logcat.
@@ -25,8 +25,9 @@ Released publicly and for free by the author. If you paid someone for this sourc
 Push the contents of this directory to a GitHub repository. The workflow at
 `.github/workflows/android.yml` installs SDK 35, NDK 25.1.8937393 and CMake,
 then uploads `app/build/outputs/apk/release/alyn_sampmobile.apk` as a workflow
-artifact. The release APK is unsigned; sign it with your own keystore before
-distribution.
+artifact. The release APK is signed with the runner's debug key so it can be
+installed for testing. Configure a private release keystore before publishing
+or distributing updates.
 
 ## Notes
 

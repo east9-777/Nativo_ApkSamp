@@ -42,6 +42,9 @@ jobs:
       - name: Build release APK
         run: ./gradlew --no-daemon --stacktrace assembleRelease
 
+      - name: Verify APK signature
+        run: $ANDROID_HOME/build-tools/35.0.0/apksigner verify --verbose app/build/outputs/apk/release/alyn_sampmobile.apk
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
