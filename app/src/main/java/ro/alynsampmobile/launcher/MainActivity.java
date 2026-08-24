@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 import ro.alynsampmobile.launcher.ui.dialog.RateUsDialog;
 import ro.alynsampmobile.launcher.ui.fragment.InformationPageFragment;
-import ro.alynsampmobile.launcher.ui.fragment.ServersPageFragment;
+import ro.alynsampmobile.launcher.ui.fragment.OnlineMenuFragment;
 import ro.alynsampmobile.launcher.ui.fragment.SettingsPageFragment;
 import ro.alynsampmobile.launcher.ui.fragment.SupportPageFragment;
 import ro.alynsampmobile.launcher.utils.Utils;
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
                 // set play fragment
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.fragmentContainer, ServersPageFragment.class, null)
+                        .replace(R.id.fragmentContainer, OnlineMenuFragment.class, null)
                         .commit();
 
                 // unselect other tabs expect play tab
