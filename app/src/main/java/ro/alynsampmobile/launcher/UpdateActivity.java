@@ -13,6 +13,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -34,6 +35,29 @@ public class UpdateActivity extends AppCompatActivity {
     public UpdateMode mUpdateMode = UpdateMode.Undefined;
 
     private boolean mIsStartingUpdate;
+
+    // Fundo da tela de loading, troca entre essas 5 imagens (a mesma ideia da tela
+    // de loading do GTA V, com arte de fundo variando enquanto carrega).
+    private final int[] backgroundImages = {
+            R.drawable.tela_car_1,
+            R.drawable.tela_car_2,
+            R.drawable.tela_car_3,
+            R.drawable.tela_car_4,
+            R.drawable.tela_car_5
+    };
+    private int backgroundImageIndex = 0;
+    private final Handler backgroundHandler = new Handler();
+    private final Runnable backgroundSwapper = new Runnable() {
+        @Override
+        public void run() {
+            ImageView backgroundImage = findViewById(R.id.background_image);
+            if (backgroundImage != null) {
+                backgroundImageIndex = (backgroundImageIndex + 1) % backgroundImages.length;
+                backgroundImage.setImageResource(backgroundImages[backgroundImageIndex]);
+            }
+            backgroundHandler.postDelayed(this, 6000);
+        }
+    };
 
     public enum UpdateMode {
         Undefined,
@@ -184,6 +208,7 @@ public class UpdateActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mConnection);
+        backgroundHandler.removeCallbacks(backgroundSwapper);
     }
 
     @Override
@@ -192,6 +217,8 @@ public class UpdateActivity extends AppCompatActivity {
         requestWindowFeature(1);
         setContentView(R.layout.activity_update);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        backgroundHandler.postDelayed(backgroundSwapper, 6000);
 
         resetProgress(false, 0, 0);
         ((MaterialTextView) findViewById(R.id.update_state)).setText("Preparing...");

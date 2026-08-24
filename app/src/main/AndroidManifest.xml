@@ -71,17 +71,17 @@
 
         <activity
             android:name="ro.alynsampmobile.launcher.MainActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name="ro.alynsampmobile.launcher.UpdateActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
 
         <activity
             android:name="ro.alynsampmobile.launcher.SplashActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="landscape">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
