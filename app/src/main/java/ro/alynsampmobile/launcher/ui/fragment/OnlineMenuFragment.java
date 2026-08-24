@@ -164,8 +164,7 @@ public class OnlineMenuFragment extends Fragment {
             Utils.saveSettings(requireActivity());
 
             try {
-                Intent intent = new Intent(requireActivity(), ro.alynsampmobile.game.SAMP.class);
-                intent.putExtra("extra_check", "alynsampmobile1337");
+                Intent intent = new Intent(requireActivity(), ro.alynsampmobile.launcher.ConnectingActivity.class);
                 requireActivity().startActivity(intent);
             } catch (Exception e) {
                 e.printStackTrace();
