@@ -96,15 +96,8 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
                 .replace(R.id.fragmentContainer, InformationPageFragment.class, null)
                 .commit();
 
-        // show rating dialog
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean hasRated = prefs.getBoolean("hasRated", false);
-        if (!hasRated) {
-            RateUsDialog rateUsDialog = new RateUsDialog(MainActivity.this);
-            Objects.requireNonNull(rateUsDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
-            rateUsDialog.setCancelable(false);
-            rateUsDialog.show();
-        }
+        // Dialog "Rate Our App" removido: nao se adaptava ao modo landscape (botoes
+        // ficavam fora da tela) e como era setCancelable(false), travava o usuario.
 
         homeLayout.setOnClickListener(v -> {
             // check if home is already selected or not.

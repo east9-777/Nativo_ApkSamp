@@ -17,12 +17,6 @@
         android:layout_width="1px"
         android:layout_height="1px" />
 
-    <View
-        android:layout_width="@dimen/_180sdp"
-        android:layout_height="@dimen/_120sdp"
-        android:layout_gravity="bottom|end"
-        android:background="@drawable/gradient_card_bottom" />
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/ahahaha"
         android:layout_width="wrap_content"

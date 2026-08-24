@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Alyn SA-MP Mobile</string>
 	
+	<string name="connecting_to_server">Conectando ao servidor…</string>
 	<string name="online">ONLINE</string>
     <string name="server_1">Servidor 1</string>
     <string name="server_2">Servidor 2</string>

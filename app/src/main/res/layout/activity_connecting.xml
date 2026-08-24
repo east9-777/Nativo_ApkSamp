@@ -4,16 +4,15 @@
     android:layout_height="match_parent"
     android:background="@color/backgroundColor">
 
-    <!-- Fundo unico da tela de download (nao troca de imagem) -->
+    <!-- Fundo que troca entre as 5 imagens (tela_car_1 a tela_car_5) via ConnectingActivity.java -->
     <ImageView
         android:id="@+id/background_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/tela_down"
+        android:src="@drawable/tela_car_1"
         android:contentDescription="@null" />
 
-    <!-- Copyright, canto superior direito -->
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/ahahaha"
         android:layout_width="wrap_content"
@@ -26,7 +25,6 @@
         android:textSize="@dimen/_8ssp"
         android:textStyle="bold" />
 
-    <!-- Status + spinner, canto inferior direito -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,36 +46,15 @@
             android:indeterminateTint="#FFFFFF" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/update_state"
+            android:id="@+id/connecting_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
             android:fontFamily="@font/gotham"
-            android:text="@string/updating_game"
+            android:text="@string/connecting_to_server"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/_9ssp"
             android:textStyle="bold" />
     </LinearLayout>
-
-    <!-- Views mantidas ocultas so pra nao quebrar o UpdateActivity.java, que ainda
-         escreve texto nelas (percentual, nome do arquivo, tamanho) - nao aparecem
-         mais na tela, mas continuam existindo por baixo dos panos. -->
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/filename"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
 
 </FrameLayout>
