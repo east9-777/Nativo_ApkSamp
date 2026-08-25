@@ -51,7 +51,7 @@ import ro.alynsampmobile.launcher.ui.fragment.SupportPageFragment;
 
 @Obfuscate
 public class Utils {
-    public static String copyright = "Copyright © Alyn_SAMPMOBILE";
+    public static String copyright = "Copyright © NativoRPG";
     public static String web = "https://raw.githubusercontent.com/east9-777/ATT-APK-NATIVO/main/";
     public static String github = "https://github.com/east9-777";
     public static String update = web + "update.json";

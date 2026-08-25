@@ -37,7 +37,7 @@ import ro.alynsampmobile.launcher.utils.Utils;
 @Obfuscate
 public class SettingsPageFragment extends Fragment {
     private MaterialAutoCompleteTextView samp_version, game_version;
-    private Switch voice, timestamp, fullscreen, displayfps, systemkeyboard, cleo, aml, monet, modloader, modify_files;
+    private Switch voice, timestamp, fullscreen, displayfps, newhud, systemkeyboard, cleo, aml, monet, modloader, modify_files;
     private MaterialButton restore_button;
     private MaterialButton chat_minus, chat_strings, chat_plus;
     private TextInputEditText chatposx, chatposy, chatsizex, chatsizey, fontsize;
@@ -127,6 +127,7 @@ public class SettingsPageFragment extends Fragment {
         timestamp = view.findViewById(R.id.timestamp_switch);
         fullscreen = view.findViewById(R.id.fullscreen_switch);
         displayfps = view.findViewById(R.id.displayfps_switch);
+        newhud = view.findViewById(R.id.newhud_switch);
         systemkeyboard = view.findViewById(R.id.systemkeyboard_switch);
         mods_layout = view.findViewById(R.id.mods_layout);
         cleo = view.findViewById(R.id.cleo_switch);
@@ -176,6 +177,7 @@ public class SettingsPageFragment extends Fragment {
         switchMap.put(timestamp, "timestamp");
         switchMap.put(fullscreen, "fullscreen");
         switchMap.put(displayfps, "display_fps");
+        switchMap.put(newhud, "new_interface");
         switchMap.put(voice, "voice_chat");
         switchMap.put(cleo, "cleo_scripts");
         switchMap.put(aml, "aml_scripts");
@@ -274,6 +276,7 @@ public class SettingsPageFragment extends Fragment {
         switchMap.put(timestamp, "timestamp");
         switchMap.put(fullscreen, "fullscreen");
         switchMap.put(displayfps, "display_fps");
+        switchMap.put(newhud, "new_interface");
         switchMap.put(voice, "voice_chat");
         switchMap.put(cleo, "cleo_scripts");
         switchMap.put(aml, "aml_scripts");

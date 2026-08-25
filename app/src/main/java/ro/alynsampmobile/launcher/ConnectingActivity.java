@@ -10,7 +10,10 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.textview.MaterialTextView;
 import com.joom.paranoid.Obfuscate;
+
+import ro.alynsampmobile.launcher.utils.Utils;
 
 /**
  * Tela de transicao mostrada entre o jogador apertar "Connect" num servidor e o
@@ -57,6 +60,8 @@ public class ConnectingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_connecting);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         hideSystemUI();
+
+        ((MaterialTextView) findViewById(R.id.ahahaha)).setText(Utils.copyright);
 
         handler.postDelayed(backgroundSwapper, IMAGE_INTERVAL_MS);
         handler.postDelayed(launchGame, TOTAL_DURATION_MS);

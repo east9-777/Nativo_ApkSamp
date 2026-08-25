@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Alyn SA-MP Mobile</string>
+    <string name="app_name">Nativo SA-MP Mobile</string>
 	
+    <string name="new_hud">New HUD (estilo GTA Online)</string>
 	<string name="story">STORY</string>
     <string name="play_offline">Jogar Offline</string>
     <string name="offline_mode_confirm">Tem certeza que deseja iniciar o jogo em modo offline?</string>
@@ -24,7 +25,7 @@
     <string name="settings">Settings</string>
     <string name="support">Support</string>
     <string name="home">Home</string>
-    <string name="alyn_sa_mp">Alyn SA-MP</string>
+    <string name="alyn_sa_mp">Nativo SA-MP</string>
     <string name="mobile">Mobile</string>
     <string name="add_server">Add Server</string>
     <string name="host_port">HOST:PORT</string>
