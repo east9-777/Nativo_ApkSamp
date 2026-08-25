@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -41,8 +42,8 @@ public class InformationPageFragment extends Fragment {
         ImageView changelogs = binding.iconChangelogs;
 
         discord.setOnClickListener(v -> openUrl(Utils.discord));
-        website.setOnClickListener(v -> openUrl(Utils.web));
-        github.setOnClickListener(v -> openUrl(Utils.github));
+        website.setOnClickListener(v -> Toast.makeText(requireContext(), R.string.coming_soon_message, Toast.LENGTH_LONG).show());
+        github.setOnClickListener(v -> Toast.makeText(requireContext(), R.string.coming_soon_message, Toast.LENGTH_LONG).show());
         changelogs.setOnClickListener(v -> new AlertDialog.Builder(requireActivity()).setTitle("Changelog:").setMessage(Utils.getChangelog()).setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).show());
 
         recyclerView = view.findViewById(R.id.recyclerView);

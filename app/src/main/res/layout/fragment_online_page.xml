@@ -31,12 +31,6 @@
                 android:src="@drawable/server1_bg"
                 android:contentDescription="@string/server_1" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_120sdp"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/gradient_card_bottom" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

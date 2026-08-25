@@ -38,7 +38,7 @@ import ro.alynsampmobile.launcher.utils.Utils;
 public class SettingsPageFragment extends Fragment {
     private MaterialAutoCompleteTextView samp_version, game_version;
     private Switch voice, timestamp, fullscreen, displayfps, systemkeyboard, cleo, aml, monet, modloader, modify_files;
-    private MaterialButton data_full, data_lite, restore_button;
+    private MaterialButton restore_button;
     private MaterialButton chat_minus, chat_strings, chat_plus;
     private TextInputEditText chatposx, chatposy, chatsizex, chatsizey, fontsize;
     private SharedPreferences settings_prefs;
@@ -102,9 +102,6 @@ public class SettingsPageFragment extends Fragment {
         view.findViewById(R.id.modloaderIcon).setOnClickListener(v ->
                 showOptionInfo("Mod Loader", "Enable Modloader, allows you to load custom game textures without modifying the official data files."));
 
-        view.findViewById(R.id.gamefilestypeIcon).setOnClickListener(v ->
-                showOptionInfo("Game Files Type", "Choose between full or lite game files."));
-
         view.findViewById(R.id.fontsizeIcon).setOnClickListener(v ->
                 showOptionInfo("Font Size", "Adjust the in-game font size for better readability."));
 
@@ -137,8 +134,6 @@ public class SettingsPageFragment extends Fragment {
         monet = view.findViewById(R.id.monet_switch);
         modloader = view.findViewById(R.id.modloader_switch);
         modify_files = view.findViewById(R.id.modify_switch);
-        data_full = view.findViewById(R.id.data_full);
-        data_lite = view.findViewById(R.id.data_lite);
         restore_button = view.findViewById(R.id.restore_button);
         chat_minus = view.findViewById(R.id.chat_minus);
         chat_strings = view.findViewById(R.id.chat_strings);
@@ -170,7 +165,6 @@ public class SettingsPageFragment extends Fragment {
         game_version_layout.setVisibility(View.GONE);
 
         setupSwitchListeners();
-        setupDataButtons();
         setupRestoreButton();
         setupChatButtons();
         setupTextWatchers();
@@ -217,35 +211,12 @@ public class SettingsPageFragment extends Fragment {
         });
     }
 
-    private void setupDataButtons() {
-        data_full.setOnClickListener(v -> handleDataChange("full", data_full));
-        data_lite.setOnClickListener(v -> handleDataChange("lite", data_lite));
-    }
-
     private void setupRestoreButton() {
         restore_button.setOnClickListener(v -> showAlertDialog("Are you sure you want to restore default settings?", (dialog, which) -> {
             Utils.restoreSettings(requireContext());
             setWidgetsForSettings();
             dialog.dismiss();
         }, (dialog, which) -> dialog.dismiss()));
-    }
-
-    private void handleDataChange(String type, MaterialButton button) {
-        if (settings_prefs.getString("files_type", "none").equals(type)) {
-            button.setChecked(true);
-            return;
-        }
-
-        showAlertDialog("Are you sure you want to change the game files to " + type + "?", (dialog, which) -> {
-                    savePreference("files_type", type);
-                    Intent intent = new Intent(getContext(), SplashActivity.class);
-                    startActivity(intent);
-                    requireActivity().finish();
-                },
-                (dialog, which) -> {
-                    button.setChecked(false);
-                    dialog.dismiss();
-                });
     }
 
     private void setupChatButtons() {
@@ -320,9 +291,6 @@ public class SettingsPageFragment extends Fragment {
             entry.getKey().setChecked(settings_prefs.getBoolean(entry.getValue(), false));
         }
 
-        String fileType = settings_prefs.getString("files_type", "none");
-        data_full.setChecked("full".equals(fileType));
-        data_lite.setChecked("lite".equals(fileType));
 
         chat_strings.setText(String.valueOf(settings_prefs.getInt("chat_strings", 5)));
         chatposx.setText(String.valueOf(settings_prefs.getInt("chat_posx", 100)));
