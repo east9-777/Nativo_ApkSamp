@@ -54,6 +54,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         obfuscator
         bass
         opencv
+        z
         spdlog::spdlog)
 
 target_compile_options(${PROJECT_NAME} PRIVATE
