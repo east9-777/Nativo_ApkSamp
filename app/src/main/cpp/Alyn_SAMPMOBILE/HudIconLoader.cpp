@@ -1,10 +1,14 @@
 #include <string>
+#if !VER_x32
 #include <unordered_map>
 #include <GLES2/gl2.h>
 #include <opencv2/opencv.hpp>
 #include <spdlog/spdlog.h>
+#endif
 
 #include "HudIconLoader.h"
+
+#if !VER_x32
 
 // Cache: caminho do arquivo -> ID da textura ja carregada na GPU.
 // Evita recarregar o mesmo PNG do disco/GPU toda vez que o widget desenha.
@@ -61,3 +65,15 @@ unsigned int LoadIconTextureFromPNG(const char* filePath)
 	s_iconCache[path] = textureId;
 	return textureId;
 }
+
+#else
+
+// O repositorio nao inclui as bibliotecas OpenCV para armeabi-v7a.
+// Mantem a funcao disponivel para o HUD, mas sem carregar texturas nesse ABI.
+unsigned int LoadIconTextureFromPNG(const char* filePath)
+{
+(void) filePath;
+return 0;
+}
+
+#endif

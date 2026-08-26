@@ -53,7 +53,9 @@ foreach(lib ${OPENCV_LIBS})
 endforeach()
 
 # 将所有的 OpenCV 库链接到目标项目
-target_link_libraries(${PROJECT_NAME} INTERFACE ${OPENCV_LIBS})
+target_link_libraries(${PROJECT_NAME} INTERFACE
+        ${OPENCV_LIBS}
+        z)
 
 target_include_directories(${PROJECT_NAME} INTERFACE
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
