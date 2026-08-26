@@ -1,5 +1,9 @@
 #include "../UI.h"
+#include "../../Client.h"
+#include "../../Game/Game.h"
 #include "StatusHUD.h"
+
+extern Game* pGame;
 
 StatusHUD::StatusHUD()
 {
