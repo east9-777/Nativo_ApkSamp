@@ -93,8 +93,8 @@ bool UI::initialize()
 	// Tamanho: 4 hexagonos de raio 42 + 3 espacos de 16 = ~320 de largura.
 	m_statusHud = new StatusHUD();
 	this->addChild(m_statusHud);
-	m_statusHud->setSize(ImVec2(340.0f, 100.0f));
-	m_statusHud->setPosition(ImVec2(24.0f, displaySize().y - 124.0f));
+	m_statusHud->setSize(ImVec2(230.0f, 70.0f));
+	m_statusHud->setPosition(ImVec2(20.0f, displaySize().y - 90.0f));
 // The HUD enables itself after an existing GTA local ped is available.
 // It must not force player creation while the game is loading.
 m_statusHud->setVisible(false);

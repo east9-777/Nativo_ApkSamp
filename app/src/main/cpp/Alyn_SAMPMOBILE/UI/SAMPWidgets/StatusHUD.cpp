@@ -8,16 +8,16 @@ extern Game* pGame;
 StatusHUD::StatusHUD()
 {
 	m_health.color = ImColor(220, 40, 40);     // vermelho
-	m_health.iconPath = "SAMP/Hud/hud_icons/vida.png";
+	m_health.iconTexdbName = "hud_vida";
 
 	m_armour.color = ImColor(60, 130, 220);    // azul
-	m_armour.iconPath = "SAMP/Hud/hud_icons/colete.png";
+	m_armour.iconTexdbName = "hud_colete";
 
 	m_hunger.color = ImColor(215, 190, 40);    // amarelo
-	m_hunger.iconPath = "SAMP/Hud/hud_icons/fome.png";
+	m_hunger.iconTexdbName = "hud_fome";
 
 	m_thirst.color = ImColor(50, 190, 220);    // ciano
-	m_thirst.iconPath = "SAMP/Hud/hud_icons/sede.png";
+	m_thirst.iconTexdbName = "hud_sede";
 }
 
 void StatusHUD::update()
@@ -61,10 +61,9 @@ void StatusHUD::setThirst(float percent)
 void StatusHUD::drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& center, float radius)
 {
 	// Textura carregada sob demanda, no primeiro draw() (aqui garantidamente
-	// estamos no render thread, com contexto GL valido).
-	if (bar.iconTexture == 0) {
-		std::string fullPath = std::string(Client::gameDir()) + bar.iconPath;
-		bar.iconTexture = LoadIconTextureFromPNG(fullPath.c_str());
+	// estamos no render thread). Le da TXD "samp", igual ao icone de voz/AFK.
+	if (bar.iconTexture == nullptr) {
+		bar.iconTexture = LoadTextureFromTxd("samp", bar.iconTexdbName.c_str());
 	}
 
 	// 1. fundo hexagonal solido escuro
@@ -74,18 +73,19 @@ void StatusHUD::drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& cent
 	renderer->drawHexagonProgress(center, radius, radius * 0.12f, bar.color, bar.value);
 
 	// 3. icone centralizado
-	if (bar.iconTexture != 0) {
+	if (bar.iconTexture != nullptr) {
 		float iconSize = radius * 0.85f;
 		ImVec2 iconMin(center.x - iconSize / 2.0f, center.y - iconSize / 2.0f);
 		ImVec2 iconMax(center.x + iconSize / 2.0f, center.y + iconSize / 2.0f);
-		renderer->drawImage(iconMin, iconMax, (ImTextureID)(intptr_t) bar.iconTexture);
+		renderer->drawImage(iconMin, iconMax, (ImTextureID) bar.iconTexture->raster);
 	}
 }
 
 void StatusHUD::draw(ImGuiRenderer* renderer)
 {
-	float radius = 42.0f;
-	float gap = 16.0f;
+	// Tamanho reduzido (era 42 antes - ficou grande demais).
+	float radius = 26.0f;
+	float gap = 10.0f;
 	float diameter = radius * 2.0f;
 
 	ImVec2 basePos = absolutePosition();

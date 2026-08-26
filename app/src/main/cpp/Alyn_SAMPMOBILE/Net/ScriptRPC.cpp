@@ -748,9 +748,16 @@ void ScrTextDrawSetString(RPCParameters* rpcParams)
 		bsData.Read(szText, wTextLength);
 		szText[wTextLength] = '\0';
 
+		// DIAGNOSTICO TEMPORARIO: mostra no log TODO textdraw que chega,
+		// com o ID real e o texto. Depois de testar /fome e /sede no jogo,
+		// procure por "TEXTDRAW DEBUG" no logcat/client log pra ver o
+		// numero de verdade que esta chegando (pode nao ser exatamente 0/1).
+		spdlog::info("TEXTDRAW DEBUG: id={} texto=\"{}\"", wTextDrawID, szText);
+
 		// "Cano" invisivel de fome/sede (ver main.pwn: CriarStatusTD /
 		// PlayerTextDrawSetString). IDs 0 e 1 sao os dois primeiros
-		// PlayerTextDraw criados pra cada jogador em OnPlayerConnect.
+		// PlayerTextDraw criados pra cada jogador em OnPlayerConnect -
+		// mas se o log acima mostrar outro numero, troque aqui embaixo.
 		const uint16_t HUD_HUNGER_TEXTDRAW_ID = 0;
 		const uint16_t HUD_THIRST_TEXTDRAW_ID = 1;
 

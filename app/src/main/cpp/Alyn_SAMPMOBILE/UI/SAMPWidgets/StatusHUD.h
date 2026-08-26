@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../Game/Game.h"
-#include "../../HudIconLoader.h"
+#include "../../Game/Util.h"
 
 /**
  * StatusHUD: 4 barras hexagonais no estilo FiveM/MTA (vida, colete, fome,
@@ -9,12 +9,15 @@
  * preenche o perimetro proporcional ao valor (0.0 a 1.0) + um icone
  * centralizado.
  *
- * Vida e Colete sao atualizados sozinhos, lendo direto do jogo
- * (CPlayerPed::GetHealth()/GetArmour()) - nao precisa de nada do servidor.
+ * Vida e Colete sao atualizados sozinhos, lendo direto do jogo (leitura
+ * segura via GamePool_FindPlayerPed, sem alocar CPlayerPed cedo demais).
  *
  * Fome e Sede dependem da gamemode mandar o valor via um textdraw "invisivel"
  * (ver ScrTextDrawSetString em Net/ScriptRPC.cpp) - setHunger()/setThirst()
  * sao chamados de la quando esse textdraw for atualizado.
+ *
+ * Icones vem da TXD "samp" (a mesma pasta texdb/samp/ que ja tem o icone de
+ * voz/AFK), texturas: hud_vida, hud_colete, hud_fome, hud_sede.
  */
 class StatusHUD : public Widget {
 public:
@@ -33,8 +36,8 @@ private:
 	struct HexBar {
 		float value = 1.0f;      // 0.0 a 1.0
 		ImColor color;
-		std::string iconPath;
-		unsigned int iconTexture = 0; // carregado sob demanda no primeiro draw()
+		std::string iconTexdbName; // nome da textura dentro da TXD "samp"
+		RwTexture* iconTexture = nullptr; // carregado sob demanda no primeiro draw()
 	};
 
 	void drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& center, float radius);
