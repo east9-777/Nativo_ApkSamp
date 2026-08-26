@@ -20,6 +20,11 @@ public:
 	void drawText(const ImVec2& pos, const ImColor& color, const std::string& text, bool outlined = false, float font_size = 0.0f, ImFont* font = nullptr);
 	void drawImage(const ImVec2& a, const ImVec2& b, ImTextureID texture);
 
+	// HUD estilo hexagono (vida/colete/fome/sede): fundo solido + borda que
+	// preenche o perimetro do hexagono proporcional a um valor de 0.0 a 1.0.
+	void drawHexagonFilled(const ImVec2& center, float radius, const ImColor& color);
+	void drawHexagonProgress(const ImVec2& center, float radius, float thickness, const ImColor& color, float percent);
+
 	void pushClipRect(const ImVec2& min, const ImVec2& max, bool intersect = false);
 	void popClipRect();
 

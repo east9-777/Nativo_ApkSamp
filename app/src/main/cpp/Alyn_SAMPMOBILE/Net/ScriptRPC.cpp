@@ -748,6 +748,30 @@ void ScrTextDrawSetString(RPCParameters* rpcParams)
 		bsData.Read(szText, wTextLength);
 		szText[wTextLength] = '\0';
 
+		// "Cano" invisivel de fome/sede (ver main.pwn: CriarStatusTD /
+		// PlayerTextDrawSetString). IDs 0 e 1 sao os dois primeiros
+		// PlayerTextDraw criados pra cada jogador em OnPlayerConnect.
+		const uint16_t HUD_HUNGER_TEXTDRAW_ID = 0;
+		const uint16_t HUD_THIRST_TEXTDRAW_ID = 1;
+
+		if (wTextDrawID == HUD_HUNGER_TEXTDRAW_ID || wTextDrawID == HUD_THIRST_TEXTDRAW_ID) {
+			float percent = atoi(szText) / 100.0f;
+			if (percent < 0.0f) percent = 0.0f;
+			if (percent > 1.0f) percent = 1.0f;
+
+			if (pUI) {
+				if (wTextDrawID == HUD_HUNGER_TEXTDRAW_ID) {
+					pUI->statushud()->setHunger(percent);
+				} else {
+					pUI->statushud()->setThirst(percent);
+				}
+			}
+
+			// nao deixa virar um textdraw "de verdade" na pool (e' so o
+			// nosso cano de dados, nunca deve aparecer/ocupar slot visual)
+			return;
+		}
+
 		CTextDraw* pTextDraw = pTextDrawPool->GetAt(wTextDrawID);
 		if (pTextDraw) {
 			pTextDraw->SetText(szText);

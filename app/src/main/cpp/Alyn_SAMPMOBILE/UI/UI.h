@@ -25,6 +25,7 @@
 #include "SAMPWidgets/ButtonPanel.h"
 #include "SAMPWidgets/VoiceButton.h"
 #include "SAMPWidgets/Scoreboard.h"
+#include "SAMPWidgets/StatusHUD.h"
 #include "SAMPWidgets/DebugLabels.h"
 #include "SAMPWidgets/DeathWindow.h"
 
@@ -45,6 +46,7 @@ public:
 	Dialog* dialog() const { return m_dialog; }
 	ButtonPanel* buttonpanel() const { return m_buttonPanel; }
 	Scoreboard* scoreboard() const { return m_scoreboard; }
+	StatusHUD* statushud() const { return m_statusHud; }
 	VoiceButton* voicebutton() const { return m_voiceButton; }
 	DebugLabels* debuglabels() const { return m_debugLabels; }
 	DeathWindow* deathwindow() const { return m_deathWindow; }
@@ -85,6 +87,7 @@ private:
 	Dialog* m_dialog;
 	ButtonPanel* m_buttonPanel;
 	Scoreboard* m_scoreboard;
+	StatusHUD* m_statusHud;
 	VoiceButton* m_voiceButton;
 	DebugLabels* m_debugLabels;
 	DeathWindow* m_deathWindow;

@@ -89,6 +89,14 @@ bool UI::initialize()
 	m_scoreboard->setPosition(ImVec2(((displaySize().x - UISettings::scoreboardSize().x) / 2), ((displaySize().y - UISettings::scoreboardSize().y) / 2)));
 	m_scoreboard->setVisible(false);
 
+	// HUD de status (vida/colete/fome/sede), canto inferior esquerdo.
+	// Tamanho: 4 hexagonos de raio 42 + 3 espacos de 16 = ~320 de largura.
+	m_statusHud = new StatusHUD();
+	this->addChild(m_statusHud);
+	m_statusHud->setSize(ImVec2(340.0f, 100.0f));
+	m_statusHud->setPosition(ImVec2(24.0f, displaySize().y - 124.0f));
+	m_statusHud->setVisible(true);
+
 	/*auto copyright = new Label(OBFUSCATE("Alyn_SAMPMOBILE"), ImColor(1.0f, 1.0f, 1.0f), true, UISettings::fontSize() / 3);
 	this->addChild(copyright);
 	copyright->setPosition(ImVec2(RsGlobal->maximumWidth * 0.83, ScaleY(5)));*/

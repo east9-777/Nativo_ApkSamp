@@ -1,4 +1,5 @@
 #include <string>
+#include <cmath>
 #include "ImGuiRenderer.h"
 #include "UISettings.h"
 
@@ -253,6 +254,62 @@ bool ImGuiRenderer::processInlineHexColor(const char* start, const char* end, Im
 void ImGuiRenderer::drawImage(const ImVec2& a, const ImVec2& b, ImTextureID texture)
 {
 	m_drawList->AddImage(texture, a, b);
+}
+
+static void GetHexagonPoints(const ImVec2& center, float radius, ImVec2 out[6])
+{
+	// Hexagono "pontudo em cima" (vertice no topo, nao lado plano),
+	// comecando as -90 graus (topo) e andando no sentido horario.
+	for (int i = 0; i < 6; ++i) {
+		float angle = -IM_PI / 2.0f + (float) i * (IM_PI / 3.0f);
+		out[i] = ImVec2(center.x + radius * cosf(angle), center.y + radius * sinf(angle));
+	}
+}
+
+void ImGuiRenderer::drawHexagonFilled(const ImVec2& center, float radius, const ImColor& color)
+{
+	ImVec2 points[6];
+	GetHexagonPoints(center, radius, points);
+	drawConvexPolyFilled(points, 6, color);
+}
+
+void ImGuiRenderer::drawHexagonProgress(const ImVec2& center, float radius, float thickness, const ImColor& color, float percent)
+{
+	if (percent <= 0.0f) return;
+	if (percent > 1.0f) percent = 1.0f;
+
+	ImVec2 points[6];
+	GetHexagonPoints(center, radius, points);
+
+	// perimetro de um hexagono regular = 6 lados, cada lado tem o mesmo
+	// comprimento que o raio (propriedade geometrica do hexagono regular).
+	float sideLength = radius;
+	float totalPerimeter = sideLength * 6.0f;
+	float targetDistance = totalPerimeter * percent;
+
+	float distanceSoFar = 0.0f;
+
+	for (int i = 0; i < 6; ++i) {
+		const ImVec2& p1 = points[i];
+		const ImVec2& p2 = points[(i + 1) % 6];
+
+		if (distanceSoFar >= targetDistance) break;
+
+		float remaining = targetDistance - distanceSoFar;
+
+		if (remaining >= sideLength) {
+			// lado inteiro cabe dentro do percentual, desenha ele completo
+			drawLine(p1, p2, color, thickness);
+			distanceSoFar += sideLength;
+		} else {
+			// so uma parte desse lado cabe, desenha so ate o ponto exato
+			float t = remaining / sideLength;
+			ImVec2 partial = ImVec2(p1.x + (p2.x - p1.x) * t, p1.y + (p2.y - p1.y) * t);
+			drawLine(p1, partial, color, thickness);
+			distanceSoFar += remaining;
+			break;
+		}
+	}
 }
 
 void ImGuiRenderer::pushClipRect(const ImVec2& min, const ImVec2& max, bool intersect)

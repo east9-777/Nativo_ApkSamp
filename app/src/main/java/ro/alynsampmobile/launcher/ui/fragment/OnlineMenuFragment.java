@@ -38,8 +38,8 @@ import ro.alynsampmobile.launcher.utils.Utils;
 public class OnlineMenuFragment extends Fragment {
 
     // TODO: troque pelo IP/porta definitivos do seu servidor quando tiver.
-    private static final String SERVER1_HOST = "144.217.62.159";
-    private static final String SERVER1_PORT = "7777";
+    private static final String SERVER1_HOST = "172.96.140.62";
+    private static final String SERVER1_PORT = "3255";
     private static final String SERVER1_NAME = "Nativo RPG";
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
