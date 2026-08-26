@@ -95,7 +95,9 @@ bool UI::initialize()
 	this->addChild(m_statusHud);
 	m_statusHud->setSize(ImVec2(340.0f, 100.0f));
 	m_statusHud->setPosition(ImVec2(24.0f, displaySize().y - 124.0f));
-	m_statusHud->setVisible(true);
+// The HUD enables itself after an existing GTA local ped is available.
+// It must not force player creation while the game is loading.
+m_statusHud->setVisible(false);
 
 	/*auto copyright = new Label(OBFUSCATE("Alyn_SAMPMOBILE"), ImColor(1.0f, 1.0f, 1.0f), true, UISettings::fontSize() / 3);
 	this->addChild(copyright);

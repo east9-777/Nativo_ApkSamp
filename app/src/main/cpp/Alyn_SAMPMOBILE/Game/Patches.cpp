@@ -122,6 +122,16 @@ void Patches::apply()
 	Memory::nop(g_saSym->Abs<uintptr_t>(addr::RwCameraEndUpdate_patch), 2);
 
 	if (Client::offlineMode()) {
+// Some arm64 devices crash inside the optional vehicle environment-map
+// pipeline during CGame::InitialiseEssentialsAfterRW(). Offline mode does
+// not need this pipeline, so disable only its void initializer instead of
+// entering the failing OpenGL setup. Keep this symbol-based so the same
+// source works for both supported ABIs.
+uintptr_t carFxInitialise = g_saSym->GetSymbol<uintptr_t>("_ZN14CCarFXRenderer10InitialiseEv");
+if (carFxInitialise) {
+spdlog::warn("Offline mode: disabling CCarFXRenderer::Initialise");
+Memory::ret(carFxInitialise);
+}
 		return;
 	}
 

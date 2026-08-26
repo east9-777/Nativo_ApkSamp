@@ -13,6 +13,9 @@ extern sa::CPlayerInfo* WORLD_PLAYERS;
 sa::CPed* GamePool_FindPlayerPed()
 {
 	//spdlog::info("GamePool_FindPlayerPed");
+if (!WORLD_PLAYERS) {
+return nullptr;
+}
 	return WORLD_PLAYERS->m_pPed;
 }
 

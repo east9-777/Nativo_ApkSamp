@@ -22,16 +22,30 @@ StatusHUD::StatusHUD()
 
 void StatusHUD::update()
 {
-	CPlayerPed* pPlayerPed = pGame->FindPlayerPed();
-	if (pPlayerPed) {
-		m_health.value = pPlayerPed->GetHealth() / 100.0f;
-		m_armour.value = pPlayerPed->GetArmour() / 100.0f;
+// FindPlayerPed() is a lazy factory. Calling it from the HUD during the
+// first frames can construct CPlayerPed before GTA has created the local
+// actor, which executes script commands against an invalid actor.
+if (!pGame) {
+setVisible(false);
+return;
+}
 
-		if (m_health.value < 0.0f) m_health.value = 0.0f;
-		if (m_health.value > 1.0f) m_health.value = 1.0f;
-		if (m_armour.value < 0.0f) m_armour.value = 0.0f;
-		if (m_armour.value > 1.0f) m_armour.value = 1.0f;
+// Read the already-existing GTA ped directly. This path never allocates a
+// CPlayerPed and is therefore safe while the game is still booting.
+sa::CPed* pPlayerPed = GamePool_FindPlayerPed();
+if (!pPlayerPed) {
+setVisible(false);
+return;
 	}
+
+setVisible(true);
+m_health.value = pPlayerPed->m_fHealth / 100.0f;
+m_armour.value = pPlayerPed->m_fArmour / 100.0f;
+
+if (m_health.value < 0.0f) m_health.value = 0.0f;
+if (m_health.value > 1.0f) m_health.value = 1.0f;
+if (m_armour.value < 0.0f) m_armour.value = 0.0f;
+if (m_armour.value > 1.0f) m_armour.value = 1.0f;
 }
 
 void StatusHUD::setHunger(float percent)
