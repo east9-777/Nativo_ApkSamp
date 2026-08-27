@@ -74,6 +74,25 @@ RwTexture* LoadTextureFromTxd(const char* txdName, const char* textureName)
 	return pTexture;
 }
 
+RwTexture* LoadTextureFromFile(const char* relativePath)
+{
+	if (!relativePath) {
+		return nullptr;
+	}
+
+	std::string path = std::string(Client::gameDir()) + relativePath;
+	spdlog::info("LoadTextureFromFile: {}", path);
+
+	// Keep HUD assets outside the original GTA data archives. RenderWare's
+	// PNG reader creates a normal RwTexture that ImGui can use as a raster.
+	RwTexture* texture = RwTextureRead(path.c_str(), nullptr);
+	if (!texture) {
+		spdlog::warn("Texture file \"{}\" was not found or could not be decoded!", path);
+	}
+
+	return texture;
+}
+
 bool AddTxdToSlot(const char* szTxdName)
 {
 	if (sa::CTxdStore::FindTxdSlot(szTxdName) == -1) {

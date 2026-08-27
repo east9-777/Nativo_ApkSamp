@@ -21,6 +21,7 @@ int GetModelRefCounts(int iModel);
 RwObject* GetModelRWObject(uint modelID);
 
 RwTexture* LoadTextureFromTxd(const char* txdname, const char* texturename);
+RwTexture* LoadTextureFromFile(const char* relativePath);
 bool AddTxdToSlot(const char* szTxdName);
 
 float FloatOffset(float f1, float f2);

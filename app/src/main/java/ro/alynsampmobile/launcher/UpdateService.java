@@ -285,13 +285,15 @@ public class UpdateService extends Service {
         for (FileData fileData : dataList) {
             File forCheck = new File(getExternalFilesDir(null), fileData.getPath());
 
-            // Sempre true agora: como a texdb e outros arquivos vao continuar sendo
-            // modificados manualmente (icones do HUD, etc.), a checagem de tamanho
-            // exato quebrava toda vez que um arquivo mudava de tamanho. So confere
-            // se o arquivo existe, nao o tamanho.
-            boolean modifyFiles = true;
+            // Os arquivos originais do GTA precisam continuar sendo validados.
+            // Os icones do HUD sao baixados separadamente como hud.zip e nao
+            // devem exigir nenhuma alteracao manual nos arquivos da data.
+            boolean modifyFiles =
+                    getSharedPreferences("samp_settings", Context.MODE_PRIVATE)
+                            .getBoolean("modify_files", false);
 
-            // skip checking file size if not using modify_files
+            // Ignore o tamanho somente quando o usuario optou explicitamente
+            // por preservar arquivos modificados manualmente.
             if (modifyFiles ? forCheck.exists() : (forCheck.exists() && forCheck.length() == fileData.getSize())) {
                 continue; // The file exists and has the correct size; no need to update.
             }

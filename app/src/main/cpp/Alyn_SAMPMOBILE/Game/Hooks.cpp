@@ -429,7 +429,10 @@ DECL_HOOK(uint32_t, Idle, void *param, bool firstFrame)
 
 	if (pUI)
 	{
-		pUI->statushud()->update();
+if (pUI->statushud())
+{
+pUI->statushud()->update();
+}
 		pUI->render();
 	}
 

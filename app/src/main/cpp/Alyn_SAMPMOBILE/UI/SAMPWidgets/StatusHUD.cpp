@@ -8,16 +8,16 @@ extern Game* pGame;
 StatusHUD::StatusHUD()
 {
 	m_health.color = ImColor(220, 40, 40);     // vermelho
-	m_health.iconTexdbName = "hud_vida";
+	m_health.iconFilePath = "hud/hud_vida.png";
 
 	m_armour.color = ImColor(60, 130, 220);    // azul
-	m_armour.iconTexdbName = "hud_colete";
+	m_armour.iconFilePath = "hud/hud_colete.png";
 
 	m_hunger.color = ImColor(215, 190, 40);    // amarelo
-	m_hunger.iconTexdbName = "hud_fome";
+	m_hunger.iconFilePath = "hud/hud_fome.png";
 
 	m_thirst.color = ImColor(50, 190, 220);    // ciano
-	m_thirst.iconTexdbName = "hud_sede";
+	m_thirst.iconFilePath = "hud/hud_sede.png";
 }
 
 void StatusHUD::update()
@@ -60,10 +60,11 @@ void StatusHUD::setThirst(float percent)
 
 void StatusHUD::drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& center, float radius)
 {
-	// Textura carregada sob demanda, no primeiro draw() (aqui garantidamente
-	// estamos no render thread). Le da TXD "txd", mesma onde vive o "fist".
-	if (bar.iconTexture == nullptr) {
-		bar.iconTexture = LoadTextureFromTxd("txd", bar.iconTexdbName.c_str());
+	// Carrega cada PNG uma unica vez e mantem os arquivos originais do GTA
+	// completamente intocados. Este metodo roda no render thread.
+	if (!bar.iconLoadAttempted) {
+		bar.iconLoadAttempted = true;
+		bar.iconTexture = LoadTextureFromFile(bar.iconFilePath.c_str());
 	}
 
 	// 1. fundo hexagonal solido escuro

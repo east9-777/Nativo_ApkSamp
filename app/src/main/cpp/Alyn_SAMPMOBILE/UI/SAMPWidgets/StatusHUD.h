@@ -17,8 +17,8 @@
  * ScrNativoStatusUpdate em Net/ScriptRPC.cpp), mandado pela gamemode
  * atraves do plugin Pawn.RakNet.
  *
- * Icones vem da TXD "txd" (mesma onde o icone "fist" - punho desarmado -
- * ja vive), texturas: hud_vida, hud_colete, hud_fome, hud_sede.
+ * Icones sao arquivos PNG independentes em files/hud/. Eles nao alteram os
+ * arquivos originais do GTA nem dependem de um TXD modificado.
  */
 class StatusHUD : public Widget {
 public:
@@ -37,8 +37,9 @@ private:
 	struct HexBar {
 		float value = 1.0f;      // 0.0 a 1.0
 		ImColor color;
-		std::string iconTexdbName; // nome da textura dentro da TXD "txd"
+		std::string iconFilePath; // caminho relativo a Client::gameDir()
 		RwTexture* iconTexture = nullptr; // carregado sob demanda no primeiro draw()
+		bool iconLoadAttempted = false;
 	};
 
 	void drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& center, float radius);
