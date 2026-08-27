@@ -748,37 +748,6 @@ void ScrTextDrawSetString(RPCParameters* rpcParams)
 		bsData.Read(szText, wTextLength);
 		szText[wTextLength] = '\0';
 
-		// DIAGNOSTICO TEMPORARIO: mostra no log TODO textdraw que chega,
-		// com o ID real e o texto. Depois de testar /fome e /sede no jogo,
-		// procure por "TEXTDRAW DEBUG" no logcat/client log pra ver o
-		// numero de verdade que esta chegando (pode nao ser exatamente 0/1).
-		spdlog::info("TEXTDRAW DEBUG: id={} texto=\"{}\"", wTextDrawID, szText);
-
-		// "Cano" invisivel de fome/sede (ver main.pwn: CriarStatusTD /
-		// PlayerTextDrawSetString). IDs 0 e 1 sao os dois primeiros
-		// PlayerTextDraw criados pra cada jogador em OnPlayerConnect -
-		// mas se o log acima mostrar outro numero, troque aqui embaixo.
-		const uint16_t HUD_HUNGER_TEXTDRAW_ID = 0;
-		const uint16_t HUD_THIRST_TEXTDRAW_ID = 1;
-
-		if (wTextDrawID == HUD_HUNGER_TEXTDRAW_ID || wTextDrawID == HUD_THIRST_TEXTDRAW_ID) {
-			float percent = atoi(szText) / 100.0f;
-			if (percent < 0.0f) percent = 0.0f;
-			if (percent > 1.0f) percent = 1.0f;
-
-			if (pUI) {
-				if (wTextDrawID == HUD_HUNGER_TEXTDRAW_ID) {
-					pUI->statushud()->setHunger(percent);
-				} else {
-					pUI->statushud()->setThirst(percent);
-				}
-			}
-
-			// nao deixa virar um textdraw "de verdade" na pool (e' so o
-			// nosso cano de dados, nunca deve aparecer/ocupar slot visual)
-			return;
-		}
-
 		CTextDraw* pTextDraw = pTextDrawPool->GetAt(wTextDrawID);
 		if (pTextDraw) {
 			pTextDraw->SetText(szText);
@@ -2125,6 +2094,32 @@ void ScrDisableVehicleCollisions(RPCParameters* rpcParams)
 	pNetGame->m_netSet->disableVehicleCollisions = bDisable;
 }
 
+// RPC customizado (fora do protocolo padrao do SA-MP, que vai so ate 178),
+// usado pela gamemode (via plugin Pawn.RakNet, PR_SendRPC/BS_RPC) pra mandar
+// fome e sede em tempo real pro cliente. Formato: 2 bytes (uint8 fome 0-100,
+// uint8 sede 0-100), nessa ordem.
+static int RPC_NativoStatusUpdate = 220;
+
+void ScrNativoStatusUpdate(RPCParameters* rpcParams)
+{
+	auto Data = reinterpret_cast<unsigned char*>(rpcParams->input);
+	int iBitLength = rpcParams->numberOfBitsOfData;
+
+	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
+
+	unsigned char byteFome = 0;
+	unsigned char byteSede = 0;
+	bsData.Read(byteFome);
+	bsData.Read(byteSede);
+
+	spdlog::info("ScriptRPC: ScrNativoStatusUpdate fome={} sede={}", byteFome, byteSede);
+
+	if (pUI) {
+		pUI->statushud()->setHunger(byteFome / 100.0f);
+		pUI->statushud()->setThirst(byteSede / 100.0f);
+	}
+}
+
 void RegisterScriptRPCs(RakClientInterface* pRakClient)
 {
 	spdlog::info("Registering script RPC's..");
@@ -2159,6 +2154,7 @@ void RegisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrShowTextDraw, ScrShowTextDraw);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrHideTextDraw, ScrHideTextDraw);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrTextDrawSetString, ScrTextDrawSetString);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoStatusUpdate, ScrNativoStatusUpdate);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrAddGangZone, ScrAddGangZone);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrRemoveGangZone, ScrGangZoneDestroy);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrFlashGangZone, ScrGangZoneFlash);
@@ -2265,6 +2261,7 @@ void UnregisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrShowTextDraw);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrHideTextDraw);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrTextDrawSetString);
+	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_NativoStatusUpdate);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrAddGangZone);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrRemoveGangZone);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrFlashGangZone);
