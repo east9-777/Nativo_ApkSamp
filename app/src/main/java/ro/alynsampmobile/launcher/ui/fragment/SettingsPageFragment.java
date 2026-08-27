@@ -37,7 +37,7 @@ import ro.alynsampmobile.launcher.utils.Utils;
 @Obfuscate
 public class SettingsPageFragment extends Fragment {
     private MaterialAutoCompleteTextView samp_version, game_version;
-    private Switch voice, timestamp, fullscreen, displayfps, newhud, systemkeyboard, cleo, aml, monet, modloader, modify_files;
+    private Switch voice, timestamp, fullscreen, displayfps, newhud, systemkeyboard, cleo, aml, monet, modloader;
     private MaterialButton restore_button;
     private MaterialButton chat_minus, chat_strings, chat_plus;
     private TextInputEditText chatposx, chatposy, chatsizex, chatsizey, fontsize;
@@ -87,9 +87,6 @@ public class SettingsPageFragment extends Fragment {
         view.findViewById(R.id.chattimestampIcon).setOnClickListener(v ->
                 showOptionInfo("Chat Timestamp", "Enable timestamps for chat messages."));
 
-        view.findViewById(R.id.modifygamefilesIcon).setOnClickListener(v ->
-                showOptionInfo("Modify Game Files", "Allow modifications to game files, make sure to backup the official data somewhere if you faced any issues."));
-
         view.findViewById(R.id.cleoIcon).setOnClickListener(v ->
                 showOptionInfo("CLEO Scripts", "Enable CLEO scripts, allows you to inject CLEO scripts in-game."));
 
@@ -134,7 +131,6 @@ public class SettingsPageFragment extends Fragment {
         aml = view.findViewById(R.id.aml_switch);
         monet = view.findViewById(R.id.monet_switch);
         modloader = view.findViewById(R.id.modloader_switch);
-        modify_files = view.findViewById(R.id.modify_switch);
         restore_button = view.findViewById(R.id.restore_button);
         chat_minus = view.findViewById(R.id.chat_minus);
         chat_strings = view.findViewById(R.id.chat_strings);
@@ -187,30 +183,12 @@ public class SettingsPageFragment extends Fragment {
         for (Map.Entry<CompoundButton, String> entry : switchMap.entrySet()) {
             setupSwitch(entry.getKey(), entry.getValue());
         }
-
-        setupSwitchWithWarning(modify_files);
     }
 
     private void setupSwitch(CompoundButton switchButton, String key) {
         switchButton.setOnCheckedChangeListener(null);
         switchButton.setChecked(settings_prefs.getBoolean(key, false));
         switchButton.setOnCheckedChangeListener((buttonView, isChecked) -> savePreference(key, isChecked));
-    }
-
-    private void setupSwitchWithWarning(CompoundButton switchButton) {
-        switchButton.setOnCheckedChangeListener(null);
-        switchButton.setChecked(settings_prefs.getBoolean("modify_files", false));
-
-        switchButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked && buttonView.isPressed()) {
-                showAlertDialog("If you enable this feature, the launcher will not ask you to update game files anymore. If you face crashes, disable this option and update game files!",
-                        (dialog, which) -> dialog.dismiss(), (dialog, which) -> {
-                            switchButton.setChecked(false);
-                            dialog.dismiss();
-                        });
-            }
-            savePreference("modify_files", isChecked);
-        });
     }
 
     private void setupRestoreButton() {
@@ -282,7 +260,6 @@ public class SettingsPageFragment extends Fragment {
         switchMap.put(aml, "aml_scripts");
         switchMap.put(monet, "monet_scripts");
         switchMap.put(modloader, "modloader");
-        switchMap.put(modify_files, "modify_files");
 
         if (settings_prefs.getInt("game_version", 0) == 0) {
             mods_layout.setVisibility(View.GONE);

@@ -22,30 +22,30 @@ StatusHUD::StatusHUD()
 
 void StatusHUD::update()
 {
-// FindPlayerPed() is a lazy factory. Calling it from the HUD during the
-// first frames can construct CPlayerPed before GTA has created the local
-// actor, which executes script commands against an invalid actor.
-if (!pGame) {
-setVisible(false);
-return;
-}
-
-// Read the already-existing GTA ped directly. This path never allocates a
-// CPlayerPed and is therefore safe while the game is still booting.
-sa::CPed* pPlayerPed = GamePool_FindPlayerPed();
-if (!pPlayerPed) {
-setVisible(false);
-return;
+	// FindPlayerPed() is a lazy factory. Calling it from the HUD during the
+	// first frames can construct CPlayerPed before GTA has created the local
+	// actor, which executes script commands against an invalid actor.
+	if (!pGame) {
+		setVisible(false);
+		return;
 	}
 
-setVisible(true);
-m_health.value = pPlayerPed->m_fHealth / 100.0f;
-m_armour.value = pPlayerPed->m_fArmour / 100.0f;
+	// Read the already-existing GTA ped directly. This path never allocates a
+	// CPlayerPed and is therefore safe while the game is still booting.
+	sa::CPed* pPlayerPed = GamePool_FindPlayerPed();
+	if (!pPlayerPed) {
+		setVisible(false);
+		return;
+	}
 
-if (m_health.value < 0.0f) m_health.value = 0.0f;
-if (m_health.value > 1.0f) m_health.value = 1.0f;
-if (m_armour.value < 0.0f) m_armour.value = 0.0f;
-if (m_armour.value > 1.0f) m_armour.value = 1.0f;
+	setVisible(true);
+	m_health.value = pPlayerPed->m_fHealth / 100.0f;
+	m_armour.value = pPlayerPed->m_fArmour / 100.0f;
+
+	if (m_health.value < 0.0f) m_health.value = 0.0f;
+	if (m_health.value > 1.0f) m_health.value = 1.0f;
+	if (m_armour.value < 0.0f) m_armour.value = 0.0f;
+	if (m_armour.value > 1.0f) m_armour.value = 1.0f;
 }
 
 void StatusHUD::setHunger(float percent)
@@ -61,9 +61,9 @@ void StatusHUD::setThirst(float percent)
 void StatusHUD::drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& center, float radius)
 {
 	// Textura carregada sob demanda, no primeiro draw() (aqui garantidamente
-	// estamos no render thread). Le da TXD "samp", igual ao icone de voz/AFK.
+	// estamos no render thread). Le da TXD "txd", mesma onde vive o "fist".
 	if (bar.iconTexture == nullptr) {
-		bar.iconTexture = LoadTextureFromTxd("samp", bar.iconTexdbName.c_str());
+		bar.iconTexture = LoadTextureFromTxd("txd", bar.iconTexdbName.c_str());
 	}
 
 	// 1. fundo hexagonal solido escuro

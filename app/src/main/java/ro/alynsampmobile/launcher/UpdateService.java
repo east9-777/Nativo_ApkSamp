@@ -285,7 +285,11 @@ public class UpdateService extends Service {
         for (FileData fileData : dataList) {
             File forCheck = new File(getExternalFilesDir(null), fileData.getPath());
 
-            boolean modifyFiles = getSharedPreferences("samp_settings", Context.MODE_PRIVATE).getBoolean("modify_files", false);
+            // Sempre true agora: como a texdb e outros arquivos vao continuar sendo
+            // modificados manualmente (icones do HUD, etc.), a checagem de tamanho
+            // exato quebrava toda vez que um arquivo mudava de tamanho. So confere
+            // se o arquivo existe, nao o tamanho.
+            boolean modifyFiles = true;
 
             // skip checking file size if not using modify_files
             if (modifyFiles ? forCheck.exists() : (forCheck.exists() && forCheck.length() == fileData.getSize())) {

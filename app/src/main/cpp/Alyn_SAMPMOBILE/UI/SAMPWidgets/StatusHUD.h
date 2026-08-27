@@ -9,15 +9,16 @@
  * preenche o perimetro proporcional ao valor (0.0 a 1.0) + um icone
  * centralizado.
  *
- * Vida e Colete sao atualizados sozinhos, lendo direto do jogo (leitura
- * segura via GamePool_FindPlayerPed, sem alocar CPlayerPed cedo demais).
+ * Vida e Colete sao atualizados sozinhos, lendo direto do jogo via
+ * GamePool_FindPlayerPed() (nao aloca CPlayerPed cedo demais, seguro
+ * durante o boot). Nao depende do servidor.
  *
- * Fome e Sede dependem da gamemode mandar o valor via um textdraw "invisivel"
- * (ver ScrTextDrawSetString em Net/ScriptRPC.cpp) - setHunger()/setThirst()
- * sao chamados de la quando esse textdraw for atualizado.
+ * Fome e Sede sao atualizados via RPC customizado (ID 220, ver
+ * ScrNativoStatusUpdate em Net/ScriptRPC.cpp), mandado pela gamemode
+ * atraves do plugin Pawn.RakNet.
  *
- * Icones vem da TXD "samp" (a mesma pasta texdb/samp/ que ja tem o icone de
- * voz/AFK), texturas: hud_vida, hud_colete, hud_fome, hud_sede.
+ * Icones vem da TXD "txd" (mesma onde o icone "fist" - punho desarmado -
+ * ja vive), texturas: hud_vida, hud_colete, hud_fome, hud_sede.
  */
 class StatusHUD : public Widget {
 public:
@@ -28,7 +29,7 @@ public:
 	// chamado todo frame (Idle hook) pra vida/colete
 	void update();
 
-	// chamado quando o textdraw "cano" de fome/sede muda (ScriptRPC.cpp)
+	// chamado quando o RPC customizado de fome/sede chega (ScriptRPC.cpp)
 	void setHunger(float percent);
 	void setThirst(float percent);
 
@@ -36,7 +37,7 @@ private:
 	struct HexBar {
 		float value = 1.0f;      // 0.0 a 1.0
 		ImColor color;
-		std::string iconTexdbName; // nome da textura dentro da TXD "samp"
+		std::string iconTexdbName; // nome da textura dentro da TXD "txd"
 		RwTexture* iconTexture = nullptr; // carregado sob demanda no primeiro draw()
 	};
 
