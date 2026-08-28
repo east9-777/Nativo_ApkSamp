@@ -254,6 +254,12 @@ DECL_HOOK(int, CGame_InitialiseRenderWare)
 
 	int result = CGame_InitialiseRenderWare();
 	sa::TextureDatabaseRuntime::Load("samp", false, sa::DF_ETC);
+
+	// Carrega tambem a categoria "txd" (onde os icones hud_vida/hud_colete/
+	// hud_fome/hud_sede foram inseridos) - sem isso, GetTexture() nunca acha
+	// nada la, mesmo com as entradas certas no txd.txt/toc/dat.
+	sa::TextureDatabaseRuntime::Load("txd", false, sa::DF_ETC);
+
 	Client::initializeUI();
 	return result;
 }
@@ -429,10 +435,7 @@ DECL_HOOK(uint32_t, Idle, void *param, bool firstFrame)
 
 	if (pUI)
 	{
-if (pUI->statushud())
-{
-pUI->statushud()->update();
-}
+		pUI->statushud()->update();
 		pUI->render();
 	}
 
