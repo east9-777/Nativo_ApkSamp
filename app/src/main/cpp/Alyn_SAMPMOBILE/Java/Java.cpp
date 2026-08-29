@@ -6,6 +6,8 @@
 #include "../../UI/UI.h"
 #include "../../Game/Game.h"
 #include "../../Net/NetGame.h"
+#include <android/asset_manager_jni.h>
+#include "../../AssetImageLoader.h"
 
 extern UI* pUI;
 extern NetGame* pNetGame;
@@ -191,6 +193,15 @@ extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_SAMP_initializeSAM
 
 	Client::initialize(gameDirStr, isOffline);
 	g_java = new Java(env, sampObj, uiObj);
+}
+
+// Recebe o AssetManager do Android (chamado do SAMP.java, uma vez, logo no
+// inicio) - a partir disso, o C++ consegue ler arquivos que estao dentro do
+// proprio APK (app/src/main/assets/), sem depender de nada baixado.
+extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_SAMP_setAssetManager(JNIEnv* env, jobject sampObj, jobject assetManagerObj)
+{
+	AAssetManager* mgr = AAssetManager_fromJava(env, assetManagerObj);
+	AssetImageLoader_SetAssetManager(mgr);
 }
 
 extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_ui_UI_keyboardSend(JNIEnv* env, jobject obj, jbyteArray str)

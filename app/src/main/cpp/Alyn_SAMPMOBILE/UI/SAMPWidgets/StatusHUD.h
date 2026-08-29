@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../Game/Game.h"
-#include "../../Game/Util.h"
+#include "../../AssetImageLoader.h"
 
 /**
  * StatusHUD: 4 barras hexagonais no estilo FiveM/MTA (vida, colete, fome,
@@ -10,15 +10,14 @@
  * centralizado.
  *
  * Vida e Colete sao atualizados sozinhos, lendo direto do jogo via
- * GamePool_FindPlayerPed() (nao aloca CPlayerPed cedo demais, seguro
- * durante o boot). Nao depende do servidor.
+ * GamePool_FindPlayerPed() - nao precisa de nada do servidor.
  *
  * Fome e Sede sao atualizados via RPC customizado (ID 220, ver
  * ScrNativoStatusUpdate em Net/ScriptRPC.cpp), mandado pela gamemode
  * atraves do plugin Pawn.RakNet.
  *
- * Icones sao arquivos PNG independentes em files/hud/. Eles nao alteram os
- * arquivos originais do GTA nem dependem de um TXD modificado.
+ * Icones vem de dentro do proprio APK (app/src/main/assets/hud/*.png) -
+ * nao da texdb, nao de download. Ver AssetImageLoader.h/.cpp.
  */
 class StatusHUD : public Widget {
 public:
@@ -37,9 +36,8 @@ private:
 	struct HexBar {
 		float value = 1.0f;      // 0.0 a 1.0
 		ImColor color;
-		std::string iconFilePath; // caminho relativo a Client::gameDir()
-		RwTexture* iconTexture = nullptr; // carregado sob demanda no primeiro draw()
-		bool iconLoadAttempted = false;
+		std::string iconPath;    // caminho relativo a app/src/main/assets/
+		unsigned int iconTexture = 0; // carregado sob demanda no primeiro draw()
 	};
 
 	void drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& center, float radius);

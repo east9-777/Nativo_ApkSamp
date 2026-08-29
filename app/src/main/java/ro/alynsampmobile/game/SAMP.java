@@ -25,6 +25,10 @@ public class SAMP extends GTASA {
 
     private native void initializeSAMP(UI ui, String gameDir, boolean isOffline);
 
+    // Manda o AssetManager pro C++, uma vez, pra ele conseguir ler os
+    // icones do HUD que ficam dentro do proprio APK (nao baixados).
+    private native void setAssetManager(android.content.res.AssetManager assetManager);
+
     private native boolean multiTouchEvent4Ex(int action, int count, int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
 
     private void loadLibraries() {
@@ -128,6 +132,7 @@ public class SAMP extends GTASA {
         Log.i(TAG, "Game directory: " + gameDir);
 
         try {
+            setAssetManager(getAssets());
             initializeSAMP(ui, gameDir, getSharedPreferences("samp_settings", Context.MODE_PRIVATE).getBoolean("offline_mode", false));
         } catch (UnsatisfiedLinkError e) {
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
