@@ -1,6 +1,6 @@
 project(opencv)
 
-set(OPENCV_SO_PATH "\( {CMAKE_CURRENT_SOURCE_DIR}/../../../../jniLibs/ \){ANDROID_ABI}/libopencv_java4.so")
+set(OPENCV_SO_PATH "\({CMAKE_CURRENT_SOURCE_DIR}/../../../../jniLibs/\){ANDROID_ABI}/libopencv_java4.so")
 
 message(STATUS "Looking for OpenCV at: ${OPENCV_SO_PATH}")
 
