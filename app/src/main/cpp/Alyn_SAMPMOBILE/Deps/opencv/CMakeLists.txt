@@ -1,6 +1,8 @@
 project(opencv)
 
-set(OPENCV_SO_PATH "\({CMAKE_CURRENT_SOURCE_DIR}/../../../../jniLibs/\){ANDROID_ABI}/libopencv_java4.so")
+set(OPENCV_SO_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../jniLibs/${ANDROID_ABI}/libopencv_java4.so"
+)
 
 message(STATUS "Looking for OpenCV at: ${OPENCV_SO_PATH}")
 
@@ -9,6 +11,7 @@ if(NOT EXISTS "${OPENCV_SO_PATH}")
 endif()
 
 add_library(opencv_java4 SHARED IMPORTED)
+
 set_target_properties(opencv_java4 PROPERTIES
     IMPORTED_LOCATION "${OPENCV_SO_PATH}"
 )
