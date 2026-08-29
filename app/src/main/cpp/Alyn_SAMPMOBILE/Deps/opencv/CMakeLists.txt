@@ -1,21 +1,26 @@
 project(opencv)
 
-# Caminho onde você colocou o libopencv_java4.so
-# (app/src/main/jniLibs/${ANDROID_ABI}/libopencv_java4.so)
+# Caminho correto para o libopencv_java4.so
+# Estrutura esperada:
+# app/src/main/cpp/          ← aqui fica o CMakeLists.txt principal
+# app/src/main/jniLibs/      ← aqui ficam as pastas armeabi-v7a e arm64-v8a
+
 set(OPENCV_SO_PATH "\( {CMAKE_SOURCE_DIR}/../jniLibs/ \){ANDROID_ABI}/libopencv_java4.so")
 
-# Verifica se o arquivo existe
-if(NOT EXISTS ${OPENCV_SO_PATH})
+# Mensagem de debug (aparece no log do Gradle)
+message(STATUS "Looking for OpenCV at: ${OPENCV_SO_PATH}")
+
+if(NOT EXISTS "${OPENCV_SO_PATH}")
     message(FATAL_ERROR "OpenCV shared library not found: ${OPENCV_SO_PATH}")
 endif()
 
-# Cria um target IMPORTED para a biblioteca compartilhada
+# Cria o target da biblioteca compartilhada
 add_library(opencv_java4 SHARED IMPORTED)
 set_target_properties(opencv_java4 PROPERTIES
-    IMPORTED_LOCATION ${OPENCV_SO_PATH}
+    IMPORTED_LOCATION "${OPENCV_SO_PATH}"
 )
 
-# Target INTERFACE que o resto do projeto usa
+# Target INTERFACE usado pelo resto do projeto
 add_library(${PROJECT_NAME} INTERFACE)
 
 target_include_directories(${PROJECT_NAME} INTERFACE
