@@ -32,15 +32,13 @@ unsigned int LoadIconTextureFromAsset(const char* assetRelativePath)
 
 	if (s_assetManager == nullptr) {
 		spdlog::warn("LoadIconTextureFromAsset: AssetManager ainda nao foi registrado (path=\"{}\")", path);
-		s_iconCache[path] = 0;
-		return 0;
+		return 0; // nao guarda no cache - tenta de novo no proximo draw()
 	}
 
 	AAsset* asset = AAssetManager_open(s_assetManager, path.c_str(), AASSET_MODE_BUFFER);
 	if (asset == nullptr) {
 		spdlog::warn("LoadIconTextureFromAsset: nao encontrei o asset \"{}\" (confira se o arquivo esta em app/src/main/assets/{})", path, path);
-		s_iconCache[path] = 0;
-		return 0;
+		return 0; // nao guarda no cache - tenta de novo no proximo draw()
 	}
 
 	off_t length = AAsset_getLength(asset);
@@ -49,8 +47,7 @@ unsigned int LoadIconTextureFromAsset(const char* assetRelativePath)
 	if (buffer == nullptr || length <= 0) {
 		spdlog::warn("LoadIconTextureFromAsset: asset \"{}\" veio vazio", path);
 		AAsset_close(asset);
-		s_iconCache[path] = 0;
-		return 0;
+		return 0; // nao guarda no cache - tenta de novo no proximo draw()
 	}
 
 	// Decodifica os bytes do PNG direto da memoria (nao precisa de arquivo
@@ -62,8 +59,7 @@ unsigned int LoadIconTextureFromAsset(const char* assetRelativePath)
 
 	if (image.empty()) {
 		spdlog::warn("LoadIconTextureFromAsset: falha ao decodificar PNG \"{}\"", path);
-		s_iconCache[path] = 0;
-		return 0;
+		return 0; // nao guarda no cache - tenta de novo no proximo draw()
 	}
 
 	if (image.channels() == 4) {
@@ -72,8 +68,7 @@ unsigned int LoadIconTextureFromAsset(const char* assetRelativePath)
 		cv::cvtColor(image, image, cv::COLOR_BGR2RGBA);
 	} else {
 		spdlog::warn("LoadIconTextureFromAsset: formato inesperado em \"{}\" ({} canais)", path, image.channels());
-		s_iconCache[path] = 0;
-		return 0;
+		return 0; // nao guarda no cache - tenta de novo no proximo draw()
 	}
 
 	GLuint textureId = 0;
