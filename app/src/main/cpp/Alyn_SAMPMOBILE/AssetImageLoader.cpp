@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <GLES2/gl2.h>
+#include <EGL/egl.h>
 #include <android/asset_manager.h>
 #include <opencv2/opencv.hpp>
 #include <spdlog/spdlog.h>
@@ -72,7 +73,17 @@ unsigned int LoadIconTextureFromAsset(const char* assetRelativePath)
 	}
 
 	GLuint textureId = 0;
+
+	// DIAGNOSTICO: confere se existe um contexto OpenGL/EGL valido nesta
+	// thread ANTES de tentar criar a textura. Se isso vier nulo, confirma
+	// que o problema e' timing (chamado cedo demais, sem contexto pronto).
+	EGLContext currentContext = eglGetCurrentContext();
+	spdlog::info("LoadIconTextureFromAsset: contexto EGL atual = {}", (void*) currentContext);
+
 	glGenTextures(1, &textureId);
+
+	GLenum glErr = glGetError();
+	spdlog::info("LoadIconTextureFromAsset: apos glGenTextures - textureId={}, glGetError()={:#x}", textureId, glErr);
 	glBindTexture(GL_TEXTURE_2D, textureId);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
