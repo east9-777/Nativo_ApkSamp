@@ -1,14 +1,12 @@
 package ro.alynsampmobile.launcher.ui.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -78,7 +76,6 @@ public class ServersPageFragment extends Fragment {
             menuList = new ArrayList<>();
             menuList.add(new ServerPickerAdapter.DataClass(getString(R.string.partners_servers), R.drawable.partners));
             menuList.add(new ServerPickerAdapter.DataClass(getString(R.string.favorite_servers), R.drawable.favorite));
-            menuList.add(new ServerPickerAdapter.DataClass(getString(R.string.offline_mode), R.drawable.offline));
         }
         return menuList;
     }
@@ -102,24 +99,6 @@ public class ServersPageFragment extends Fragment {
             selectedFragment = new HostedServersFragment();
         } else if (title.equals(getString(R.string.favorite_servers))) {
             selectedFragment = new FavoriteServersFragment();
-        } else if (title.equals(getString(R.string.offline_mode))) {
-            AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.offline_mode)
-                    .setMessage("Are you sure you want to start the game in offline mode?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        requireActivity().getSharedPreferences("samp_settings", Context.MODE_PRIVATE).edit().putBoolean("offline_mode", true).apply();
-                        // start game
-                        try {
-                            Intent intent = new Intent(requireActivity(), ro.alynsampmobile.game.SAMP.class);
-                            intent.putExtra("extra_check", "alynsampmobile1337");
-                            requireActivity().startActivity(intent);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    })
-                    .setNegativeButton("No", null)
-                    .create();
-            alertDialog.show();
         }
 
         if (selectedFragment != null && !selectedFragment.getClass().equals(getChildFragmentManager().findFragmentById(R.id.fragment_container))) {

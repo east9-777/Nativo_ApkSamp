@@ -148,24 +148,6 @@ public class SplashActivity extends AppCompatActivity implements GLSurfaceView.R
                     .setPositiveButton("Retry", (dialog, which) -> {
                         dialog.dismiss();
                         startApp();
-                    }).setNegativeButton("Offline Mode", (dialog, which) -> {
-                        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                                .setTitle(R.string.offline_mode)
-                                .setMessage("Are you sure you want to start the game in offline mode?")
-                                .setPositiveButton("Yes", (dialog2, which2) -> {
-                                    getSharedPreferences("samp_settings", Context.MODE_PRIVATE).edit().putBoolean("offline_mode", true).apply();
-                                    // start game
-                                    try {
-                                        Intent intent = new Intent(this, ro.alynsampmobile.game.SAMP.class);
-                                        intent.putExtra("extra_check", "alynsampmobile1337");
-                                        startActivity(intent);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                })
-                                .setNegativeButton("No", null)
-                                .create();
-                        alertDialog.show();
                     }).setCancelable(false).show();
             return;
         }
