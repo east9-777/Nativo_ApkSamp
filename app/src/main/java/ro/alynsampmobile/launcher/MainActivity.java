@@ -37,9 +37,11 @@ import ro.alynsampmobile.launcher.utils.Utils;
 
 /**
  * Tela principal (novo visual: uma unica tela com imagem de fundo, sem abas
- * embaixo). Tem os botoes "Escolher Servidor" e "Configuracoes" no topo, os
- * links sociais na lateral esquerda, e o botao de conectar com o contador de
- * players embaixo. As Configuracoes abrem como um painel por cima dessa tela.
+ * embaixo). Tem o botao "Configuracoes" no topo direito, os links sociais na
+ * lateral esquerda, e embaixo a direita o card do servidor escolhido (que
+ * abre o painel de troca de servidor) ao lado do botao de conectar. Tanto as
+ * Configuracoes quanto a escolha de servidor abrem como um painel por cima
+ * dessa tela.
  */
 @Obfuscate
 public class MainActivity extends AppCompatActivity implements MaxAdListener, MaxAdViewAdListener {
@@ -65,6 +67,11 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
     private ImageButton btnCloseSettings;
     private TextView playersOnlineText;
     private boolean settingsOpen = false;
+
+    private View chooseServerContainer;
+    private TextView server1PlayersText;
+    private android.widget.ProgressBar server1Progress;
+    private boolean chooseServerOpen = false;
 
     private final Runnable playersRefreshRunnable = new Runnable() {
         @Override
@@ -113,10 +120,23 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
         btnCloseSettings = findViewById(R.id.btnCloseSettings);
         playersOnlineText = findViewById(R.id.playersOnlineText);
 
+        chooseServerContainer = findViewById(R.id.chooseServerContainer);
+        TextView serverPickerName = findViewById(R.id.serverPickerName);
+        TextView server1Name = findViewById(R.id.server1_name);
+        server1PlayersText = findViewById(R.id.server1_players);
+        server1Progress = findViewById(R.id.server1_progress);
+        View btnBackChooseServer = findViewById(R.id.btnBackChooseServer);
+        View server1Card = findViewById(R.id.server1_card);
+        View server2Card = findViewById(R.id.server2_card);
+        View server3Card = findViewById(R.id.server3_card);
+
+        serverPickerName.setText(SERVER1_NAME);
+        server1Name.setText(SERVER1_NAME);
+
         ImageButton btnDiscord = findViewById(R.id.btnDiscord);
         ImageButton btnYoutube = findViewById(R.id.btnYoutube);
         ImageButton btnInstagram = findViewById(R.id.btnInstagram);
-        MaterialButton btnChooseServer = findViewById(R.id.btnChooseServer);
+        View serverPickerCard = findViewById(R.id.serverPickerCard);
         MaterialButton btnSettings = findViewById(R.id.btnSettings);
         MaterialButton btnConnect = findViewById(R.id.btnConnect);
 
@@ -124,7 +144,17 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
         btnYoutube.setOnClickListener(v -> openLink(YOUTUBE_URL));
         btnInstagram.setOnClickListener(v -> openLink(INSTAGRAM_URL));
 
-        btnChooseServer.setOnClickListener(v -> showChooseServerDialog());
+        serverPickerCard.setOnClickListener(v -> openChooseServerPanel());
+        btnBackChooseServer.setOnClickListener(v -> closeChooseServerPanel());
+
+        // servidor 1 e' o unico ativo no momento, entao so fecha o painel
+        server1Card.setOnClickListener(v -> closeChooseServerPanel());
+
+        View.OnClickListener comingSoonListener = v -> Toast.makeText(
+                this, R.string.coming_soon_message, Toast.LENGTH_LONG).show();
+        server2Card.setOnClickListener(comingSoonListener);
+        server3Card.setOnClickListener(comingSoonListener);
+
         btnSettings.setOnClickListener(v -> openSettingsPanel());
         btnCloseSettings.setOnClickListener(v -> closeSettingsPanel());
         btnConnect.setOnClickListener(v -> showConnectDialog());
@@ -156,7 +186,9 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
 
     /**
      * Consulta o servidor 1 em segundo plano e atualiza o contador de players
-     * que fica acima do botao de conectar (ex: "10 / 200 online").
+     * que fica no card ao lado do botao de conectar (ex: "10/200") e, se o
+     * painel de escolha de servidor estiver com as views infladas, tambem
+     * atualiza o card do servidor 1 la dentro.
      */
     private void refreshPlayerCount() {
         new Thread(() -> {
@@ -165,44 +197,55 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
                 if (query.isOnline()) {
                     String[] info = query.getInfo();
                     if (info != null) {
-                        String text = getString(R.string.players_online_format, info[1], info[2]);
-                        mainHandler.post(() -> playersOnlineText.setText(text));
+                        String text = getString(R.string.players_count_format, info[1], info[2]);
+                        int current = parsePlayersOrZero(info[1]);
+                        int max = parsePlayersOrZero(info[2]);
+                        mainHandler.post(() -> {
+                            playersOnlineText.setText(text);
+                            server1PlayersText.setText(text);
+                            if (max > 0) {
+                                server1Progress.setMax(max);
+                                server1Progress.setProgress(current);
+                            }
+                        });
                         return;
                     }
                 }
-                mainHandler.post(() -> playersOnlineText.setText(R.string.players_online_unknown));
+                mainHandler.post(() -> {
+                    playersOnlineText.setText(R.string.players_online_unknown);
+                    server1PlayersText.setText(R.string.players_count_unknown);
+                });
             } catch (Exception e) {
                 e.printStackTrace();
-                mainHandler.post(() -> playersOnlineText.setText(R.string.players_online_unknown));
+                mainHandler.post(() -> {
+                    playersOnlineText.setText(R.string.players_online_unknown);
+                    server1PlayersText.setText(R.string.players_count_unknown);
+                });
             }
         }).start();
     }
 
+    private int parsePlayersOrZero(String value) {
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
     /**
-     * Painel pra trocar entre os 3 servidores (mesmos cards de antes). Servidor
-     * 1 e' o unico funcional; 2 e 3 mostram "em breve".
+     * Abre o painel de escolha de servidor (tela cheia, por cima da tela
+     * principal, igual ao painel de configuracoes). Servidor 1 e' o unico
+     * funcional; 2 e 3 mostram "em breve".
      */
-    private void showChooseServerDialog() {
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_choose_server, null);
+    private void openChooseServerPanel() {
+        chooseServerContainer.setVisibility(View.VISIBLE);
+        chooseServerOpen = true;
+    }
 
-        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
-
-        TextView server1Name = dialogView.findViewById(R.id.server1_name);
-        server1Name.setText(SERVER1_NAME);
-
-        View server1Card = dialogView.findViewById(R.id.server1_card);
-        View server2Card = dialogView.findViewById(R.id.server2_card);
-        View server3Card = dialogView.findViewById(R.id.server3_card);
-
-        // servidor 1 e' o unico ativo no momento, entao so fecha o painel
-        server1Card.setOnClickListener(v -> dialog.dismiss());
-
-        View.OnClickListener comingSoonListener = v -> Toast.makeText(
-                this, R.string.coming_soon_message, Toast.LENGTH_LONG).show();
-        server2Card.setOnClickListener(comingSoonListener);
-        server3Card.setOnClickListener(comingSoonListener);
-
-        dialog.show();
+    private void closeChooseServerPanel() {
+        chooseServerContainer.setVisibility(View.GONE);
+        chooseServerOpen = false;
     }
 
     /**
@@ -395,6 +438,11 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
 
     @Override
     public void onBackPressed() {
+        if (chooseServerOpen) {
+            closeChooseServerPanel();
+            return;
+        }
+
         if (settingsOpen) {
             closeSettingsPanel();
             return;

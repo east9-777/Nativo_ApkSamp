@@ -89,4 +89,10 @@
     <string name="players_online_format">%1$s / %2$s online</string>
     <string name="players_online_unknown">Servidor offline</string>
     <string name="checking_players">Verificando…</string>
+
+    <!-- Card de servidor selecionado (ao lado do botao conectar) e painel de escolha de servidor -->
+    <string name="players_count_format">%1$s/%2$s</string>
+    <string name="players_count_unknown">--/--</string>
+    <string name="back">VOLTAR</string>
+    <string name="tap_to_choose_server">Toque para trocar de servidor</string>
 </resources>
