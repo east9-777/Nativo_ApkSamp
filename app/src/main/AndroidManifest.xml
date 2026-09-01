@@ -79,10 +79,6 @@
             android:screenOrientation="sensorLandscape" />
 
         <activity
-            android:name="ro.alynsampmobile.launcher.ConnectingActivity"
-            android:screenOrientation="sensorLandscape" />
-
-        <activity
             android:name="ro.alynsampmobile.launcher.SplashActivity"
             android:exported="true"
             android:screenOrientation="sensorLandscape">

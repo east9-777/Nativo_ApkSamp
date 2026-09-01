@@ -1,66 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <LinearLayout
-        android:id="@+id/topTabBar"
+    <!-- Imagem de fundo em tela cheia. TODO: trocar pela arte final quando o usuario fornecer. -->
+    <ImageView
+        android:id="@+id/mainBackground"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/launcher_bg" />
+
+    <!-- Escurece a parte de baixo pra dar legibilidade ao texto de players e ao botao Conectar -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_120sdp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/gradient_bottom_scrim" />
+
+    <!-- Coluna de redes sociais, lado esquerdo. TODO: preencher os links quando fornecidos. -->
+    <LinearLayout
+        android:id="@+id/socialBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/_14sdp"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/btnDiscord"
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="@dimen/_38sdp"
+            android:background="@drawable/circle_icon_bg"
+            android:contentDescription="@string/discord"
+            android:padding="@dimen/_8sdp"
+            android:src="@drawable/ic_discord" />
+
+        <ImageButton
+            android:id="@+id/btnYoutube"
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/circle_icon_bg"
+            android:contentDescription="YouTube"
+            android:padding="@dimen/_8sdp"
+            android:src="@drawable/ic_youtube" />
+
+        <ImageButton
+            android:id="@+id/btnInstagram"
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/circle_icon_bg"
+            android:contentDescription="Instagram"
+            android:padding="@dimen/_8sdp"
+            android:src="@drawable/ic_instagram" />
+
+    </LinearLayout>
+
+    <!-- Botoes do topo direito: escolher servidor + configuracoes -->
+    <LinearLayout
+        android:id="@+id/topRightBar"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="#000000"
-        android:elevation="@dimen/_7sdp"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/_12sdp"
-        android:paddingTop="@dimen/_7sdp"
-        android:paddingBottom="@dimen/_7sdp">
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/_14sdp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tabOnline"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnChooseServer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/tab_active_bg"
+            android:background="@drawable/pill_button_accent"
             android:fontFamily="@font/montserrat_bold"
-            android:paddingStart="@dimen/_10sdp"
-            android:paddingTop="@dimen/_3sdp"
-            android:paddingEnd="@dimen/_10sdp"
-            android:paddingBottom="@dimen/_3sdp"
-            android:text="@string/online"
-            android:textColor="#000000"
-            android:textSize="@dimen/_9ssp"
-            android:textStyle="bold" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tabStory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:fontFamily="@font/montserrat_bold"
-            android:paddingStart="@dimen/_10sdp"
-            android:paddingTop="@dimen/_3sdp"
-            android:paddingEnd="@dimen/_10sdp"
-            android:paddingBottom="@dimen/_3sdp"
-            android:text="@string/story"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingEnd="@dimen/_14sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:text="@string/choose_server"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/_9ssp"
-            android:textStyle="bold" />
+            app:elevation="0dp"
+            app:icon="@drawable/ic_server_list"
+            app:iconTint="#FFFFFF"
+            app:iconGravity="textStart" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tabSettings"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
+            android:background="@drawable/pill_button_dark"
             android:fontFamily="@font/montserrat_bold"
-            android:paddingStart="@dimen/_10sdp"
-            android:paddingTop="@dimen/_3sdp"
-            android:paddingEnd="@dimen/_10sdp"
-            android:paddingBottom="@dimen/_3sdp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingEnd="@dimen/_14sdp"
+            android:paddingBottom="@dimen/_8sdp"
             android:text="@string/settings"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/_9ssp"
+            app:elevation="0dp"
+            app:icon="@drawable/ic_settings"
+            app:iconTint="#FFFFFF"
+            app:iconGravity="textStart" />
+
+    </LinearLayout>
+
+    <!-- Contador de players + botao de conectar, canto inferior direito -->
+    <LinearLayout
+        android:id="@+id/bottomConnectArea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/_18sdp"
+        android:gravity="end"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/playersOnlineText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_6sdp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="@string/checking_players"
+            android:textColor="#FFD966"
+            android:textSize="@dimen/_10ssp"
             android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/pill_button_accent"
+            android:fontFamily="@font/montserrat_bold"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="@dimen/_150sdp"
+            android:paddingStart="@dimen/_20sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_20sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:text="@string/connect"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/_11ssp"
+            android:textStyle="bold"
+            app:elevation="0dp" />
 
     </LinearLayout>
 
@@ -68,8 +165,8 @@
         android:id="@+id/ahahaha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
         android:layout_margin="@dimen/_10sdp"
         android:elevation="@dimen/_4sdp"
         android:fontFamily="sans-serif"
@@ -78,12 +175,26 @@
         android:textSize="@dimen/_7ssp"
         android:textStyle="bold" />
 
+    <!-- Painel de configuracoes: ocupa a tela toda, fica escondido ate o usuario tocar na engrenagem -->
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentContainer"
-        android:name="ro.alynsampmobile.launcher.ui.fragment.OnlineMenuFragment"
+        android:id="@+id/settingsContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/topTabBar"
-        tools:layout="@layout/fragment_online_page" />
+        android:visibility="gone"
+        tools:layout="@layout/fragment_settings_page" />
+
+    <ImageButton
+        android:id="@+id/btnCloseSettings"
+        android:layout_width="@dimen/_36sdp"
+        android:layout_height="@dimen/_36sdp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="@dimen/_10sdp"
+        android:background="@drawable/circle_icon_bg"
+        android:contentDescription="@string/cancel"
+        android:elevation="@dimen/_6sdp"
+        android:padding="@dimen/_8sdp"
+        android:src="@drawable/arrow_back"
+        android:visibility="gone" />
 
 </RelativeLayout>
