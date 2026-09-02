@@ -242,11 +242,15 @@
                         tools:ignore="UseSwitchCompatOrMaterialXml,TouchTargetSizeCheck" />
                 </RelativeLayout>
 
-                <!-- New HUD (estilo GTA Online: mapa quadrado embaixo + barras de vida/colete) -->
+                <!-- New HUD (estilo GTA Online: mapa quadrado embaixo + barras de vida/colete)
+                     Oculta a pedido do usuario: fica desativada (checked=false) e nao aparece
+                     na tela de configuracoes. O switch e o codigo continuam existindo pra nao
+                     quebrar o restante da tela, so a visibilidade foi removida. -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_50sdp"
-                    android:paddingVertical="@dimen/_10sdp">
+                    android:paddingVertical="@dimen/_10sdp"
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/newhudIcon"
