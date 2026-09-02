@@ -16,10 +16,13 @@
         android:scaleType="centerCrop"
         android:src="@drawable/launcher_bg" />
 
-    <!-- Escurece a parte de baixo pra dar legibilidade ao texto de players e ao botao Conectar -->
+    <!-- Escurece a parte de baixo pra dar legibilidade ao texto de players e ao botao Conectar.
+         Usa dp fixo (nao sdp) de proposito: o app roda em paisagem, e sdp escala pela MENOR
+         largura do aparelho (que em paisagem vira a altura da tela) - com _120sdp isso comia
+         mais de 1/3 da altura da tela e parecia uma faixa preta enorme. -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_120sdp"
+        android:layout_height="90dp"
         android:layout_alignParentBottom="true"
         android:background="@drawable/gradient_bottom_scrim" />
 
@@ -80,6 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/pill_button_dark"
+            app:backgroundTint="@null"
             android:fontFamily="@font/montserrat_bold"
             android:insetTop="0dp"
             android:insetBottom="0dp"
@@ -112,13 +116,15 @@
         <LinearLayout
             android:id="@+id/serverPickerCard"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginEnd="@dimen/_10sdp"
             android:background="@drawable/server_picker_bg"
             android:clickable="true"
             android:contentDescription="@string/tap_to_choose_server"
             android:focusable="true"
             android:gravity="center_vertical"
+            android:minHeight="@dimen/_46sdp"
             android:orientation="vertical"
             android:paddingStart="@dimen/_14sdp"
             android:paddingTop="@dimen/_8sdp"
@@ -164,7 +170,9 @@
             android:id="@+id/btnConnect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/pill_button_accent"
+            app:backgroundTint="@null"
             android:fontFamily="@font/montserrat_bold"
             android:insetTop="0dp"
             android:insetBottom="0dp"
@@ -207,6 +215,8 @@
     <include
         android:id="@+id/chooseServerContainer"
         layout="@layout/panel_choose_server"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="gone" />
 
     <ImageButton
