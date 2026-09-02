@@ -6,9 +6,9 @@ import android.widget.RelativeLayout;
 import com.google.android.material.textview.MaterialTextView;
 import com.joom.paranoid.Obfuscate;
 
-import com.nativo.rpg.launcher.BuildConfig;
-import com.nativo.rpg.launcher.R;
-import com.nativo.rpg.launcher.utils.Utils;
+import com.nativo.rpg.br.BuildConfig;
+import com.nativo.rpg.br.R;
+import com.nativo.rpg.br.utils.Utils;
 
 @Obfuscate
 public class Copyright {

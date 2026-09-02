@@ -7,7 +7,7 @@
 -keep class com.nativo.rpg.game.ui.widgets.* { *; }
 -keep class com.nativo.rpg.game.ui.widgets.adapter.* { *; }
 
--keep class com.nativo.rpg.launcher.utils.SignatureChecker { *; }
+-keep class com.nativo.rpg.br.utils.SignatureChecker { *; }
 
 # for minify
 -dontwarn javax.servlet.**

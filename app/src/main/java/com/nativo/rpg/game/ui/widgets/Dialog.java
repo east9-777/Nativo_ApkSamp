@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 import com.nativo.rpg.game.Utils;
 import com.nativo.rpg.game.ui.widgets.adapter.DialogAdapter;
-import com.nativo.rpg.launcher.R;
+import com.nativo.rpg.br.R;
 
 @Obfuscate
 public class Dialog {

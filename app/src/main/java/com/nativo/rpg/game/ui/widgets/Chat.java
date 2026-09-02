@@ -18,7 +18,7 @@ import com.joom.paranoid.Obfuscate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nativo.rpg.launcher.R;
+import com.nativo.rpg.br.R;
 import com.nativo.rpg.game.Utils;
 
 @Obfuscate

@@ -1,4 +1,4 @@
-package com.nativo.rpg.launcher;
+package com.nativo.rpg.br;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,9 +29,9 @@ import com.joom.paranoid.Obfuscate;
 
 import java.util.concurrent.TimeUnit;
 
-import com.nativo.rpg.launcher.ui.fragment.SettingsPageFragment;
-import com.nativo.rpg.launcher.utils.SampQuery;
-import com.nativo.rpg.launcher.utils.Utils;
+import com.nativo.rpg.br.ui.fragment.SettingsPageFragment;
+import com.nativo.rpg.br.utils.SampQuery;
+import com.nativo.rpg.br.utils.Utils;
 
 /**
  * Tela principal (novo visual: uma unica tela com imagem de fundo, sem abas

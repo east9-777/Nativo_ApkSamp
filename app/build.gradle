@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace "com.nativo.rpg.launcher"
+    namespace "com.nativo.rpg.br"
     compileSdk 35
 
     defaultConfig {
-        applicationId "com.nativo.rpg.launcher"
+        applicationId "com.nativo.rpg.br"
         minSdk 24
         targetSdk 35
         versionCode 1700

@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.Objects;
 
 import com.nativo.rpg.game.ui.UI;
-import com.nativo.rpg.launcher.utils.SignatureChecker;
+import com.nativo.rpg.br.utils.SignatureChecker;
 
 @Obfuscate
 public class SAMP extends GTASA {

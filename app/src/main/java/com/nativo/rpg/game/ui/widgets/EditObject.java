@@ -14,7 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.button.MaterialButton;
 import com.joom.paranoid.Obfuscate;
 
-import com.nativo.rpg.launcher.R;
+import com.nativo.rpg.br.R;
 
 @Obfuscate
 public class EditObject {

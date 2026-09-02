@@ -14,7 +14,7 @@ import com.joom.paranoid.Obfuscate;
 import java.util.ArrayList;
 
 import com.nativo.rpg.game.Utils;
-import com.nativo.rpg.launcher.R;
+import com.nativo.rpg.br.R;
 
 @Obfuscate
 public class DialogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

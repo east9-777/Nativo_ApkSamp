@@ -173,7 +173,7 @@ void Java::exitGame()
 
 const std::string EXPECTED_SIGNATURE(OBFUSCATE("89cb277c5cd1a90145acb3c2a89cea995bfbd3b3e5ebe2b180d2248efc4aa041"));
 
-extern "C" JNIEXPORT jboolean JNICALL Java_com_nativo_rpg_launcher_utils_SignatureChecker_nativeCheckSignature(JNIEnv* env, jclass clazz, jstring computedSignature)
+extern "C" JNIEXPORT jboolean JNICALL Java_com_nativo_rpg_br_utils_SignatureChecker_nativeCheckSignature(JNIEnv* env, jclass clazz, jstring computedSignature)
 {
 	const char* computedSignatureCStr = env->GetStringUTFChars(computedSignature, nullptr);
 	std::string computedSignatureStr(computedSignatureCStr);

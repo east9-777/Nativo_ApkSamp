@@ -15,7 +15,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 
-import com.nativo.rpg.launcher.R;
+import com.nativo.rpg.br.R;
 
 
 public class Keyboard {
