@@ -50,7 +50,11 @@ private:
 		float value = 1.0f;      // 0.0 a 1.0
 		ImColor color;
 		std::string iconPath;    // caminho relativo a app/src/main/assets/
-		unsigned int iconTexture = 0; // carregado sob demanda no primeiro draw()
+		// RwRaster* (ver AssetImageLoader.h) carregado sob demanda no primeiro
+		// draw(). Precisa ser um ponteiro de verdade (void*), nao um inteiro de
+		// 32 bits - em build arm64-v8a um GLuint/unsigned int truncaria a parte
+		// alta do ponteiro real e corromperia o raster.
+		void* iconTexture = nullptr;
 	};
 
 	void drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& center, float radius);

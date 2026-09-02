@@ -74,10 +74,9 @@ void StatusHUD::setGMVisible(bool visible)
 
 void StatusHUD::drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& center, float radius)
 {
-	// Textura carregada sob demanda, no primeiro draw() (aqui garantidamente
-	// estamos no render thread, com contexto GL valido). Le direto de
-	// dentro do APK (app/src/main/assets/), nao da pasta de dados baixada.
-	if (bar.iconTexture == 0) {
+	// Textura (RwRaster) carregada sob demanda, no primeiro draw(). Le direto
+	// de dentro do APK (app/src/main/assets/), nao da pasta de dados baixada.
+	if (bar.iconTexture == nullptr) {
 		bar.iconTexture = LoadIconTextureFromAsset(bar.iconPath.c_str());
 	}
 
@@ -88,11 +87,11 @@ void StatusHUD::drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& cent
 	renderer->drawHexagonProgress(center, radius, radius * 0.12f, bar.color, bar.value);
 
 	// 3. icone centralizado
-	if (bar.iconTexture != 0) {
+	if (bar.iconTexture != nullptr) {
 		float iconSize = radius * 0.85f;
 		ImVec2 iconMin(center.x - iconSize / 2.0f, center.y - iconSize / 2.0f);
 		ImVec2 iconMax(center.x + iconSize / 2.0f, center.y + iconSize / 2.0f);
-		renderer->drawImage(iconMin, iconMax, (ImTextureID)(intptr_t) bar.iconTexture);
+		renderer->drawImage(iconMin, iconMax, (ImTextureID) bar.iconTexture);
 	}
 }
 
