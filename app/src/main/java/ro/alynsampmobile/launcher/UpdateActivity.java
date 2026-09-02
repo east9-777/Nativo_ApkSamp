@@ -169,8 +169,8 @@ public class UpdateActivity extends AppCompatActivity {
                     Log.e("UpdateActivity", "UpdateActivity -> UpdateService.UPDATE_STATUS_ERROR");
                     try {
                         new AlertDialog.Builder(UpdateActivity.this)
-                                .setTitle("Update:")
-                                .setMessage("Failed to download the update!")
+                                .setTitle("Atualização:")
+                                .setMessage("Falha ao baixar a atualização!")
                                 .setPositiveButton("Ok", (dialog, which) -> {
                                     startActivity(new Intent(UpdateActivity.this, SplashActivity.class));
                                     finish();

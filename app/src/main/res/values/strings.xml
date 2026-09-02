@@ -77,7 +77,7 @@
     <string name="favorite_servers">Your Favorite Servers</string>
     <string name="game_version">Game Version</string>
     <string name="mod_loader">Mod Loader</string>
-    <string name="checking_for_updates_please_wait">CHECKING FOR UPDATES, PLEASE WAIT...</string>
+    <string name="checking_for_updates_please_wait">VERIFICANDO ATUALIZAÇÕES, AGUARDE...</string>
     <string name="ahahaha">ahahaha</string>
     <string name="please_do_not_minimize_or_close_app_while_downloading">Please do not minimize or close app while downloading!</string>
     <string name="updating_game">Updating game...</string>

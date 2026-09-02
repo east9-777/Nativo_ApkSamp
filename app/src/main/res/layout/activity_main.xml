@@ -76,19 +76,20 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_marginStart="@dimen/_14sdp"
-        android:layout_marginTop="@dimen/_54sdp"
+        android:layout_marginTop="@dimen/_14sdp"
         android:background="@drawable/server_picker_bg"
         android:gravity="center_vertical"
+        android:minHeight="@dimen/_46sdp"
         android:orientation="horizontal"
         android:paddingStart="@dimen/_14sdp"
-        android:paddingTop="@dimen/_6sdp"
+        android:paddingTop="@dimen/_10sdp"
         android:paddingEnd="@dimen/_14sdp"
-        android:paddingBottom="@dimen/_6sdp">
+        android:paddingBottom="@dimen/_10sdp">
 
         <ImageView
-            android:layout_width="@dimen/_14sdp"
-            android:layout_height="@dimen/_14sdp"
-            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:contentDescription="@null"
             android:src="@drawable/ic_people" />
 
@@ -105,7 +106,7 @@
             android:maxLines="1"
             android:textColor="#FFFFFF"
             android:textColorHint="#99FFFFFF"
-            android:textSize="@dimen/_10ssp"
+            android:textSize="@dimen/_11ssp"
             android:textStyle="bold" />
 
     </LinearLayout>

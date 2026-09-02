@@ -50,6 +50,7 @@ public class SplashActivity extends AppCompatActivity implements GLSurfaceView.R
     public Messenger mService;
     GLSurfaceView glSurfaceView;
     MaterialButton btnForceUpdate;
+    View statusPill;
 
     Logcat logcat;
 
@@ -99,6 +100,7 @@ public class SplashActivity extends AppCompatActivity implements GLSurfaceView.R
         glSurfaceView.setRenderer(this);
 
         btnForceUpdate = findViewById(R.id.btnForceUpdate);
+        statusPill = findViewById(R.id.statusPill);
 
         Toast.makeText(this, "Alyn SA-MP Mobile v" + BuildConfig.VERSION_NAME, Toast.LENGTH_SHORT).show();
 
@@ -277,8 +279,8 @@ public class SplashActivity extends AppCompatActivity implements GLSurfaceView.R
                     if (gameStatus == UpdateActivity.GameStatus.GameUpdateRequired && !Utils.isTester(SplashActivity.this)) {
                         try {
                             new AlertDialog.Builder(SplashActivity.this)
-                                    .setTitle("Update:").setMessage("Game update required! Press 'Update' and download the latest version from the website.")
-                                    .setPositiveButton("Update", (dialog, which) -> {
+                                    .setTitle("Atualização:").setMessage("Atualização do aplicativo necessária! Toque em 'Atualizar' e baixe a versão mais recente pelo site.")
+                                    .setPositiveButton("Atualizar", (dialog, which) -> {
                                         /*Intent intent = new Intent(SplashActivity.this, UpdateActivity.class);
                                         intent.putExtra("mode", UpdateActivity.UpdateMode.GameUpdate.name());
                                         startActivity(intent);
@@ -292,7 +294,10 @@ public class SplashActivity extends AppCompatActivity implements GLSurfaceView.R
                     } else if (gameStatus == UpdateActivity.GameStatus.GameFilesUpdateRequired) {
                         // Sem opcao de recusar: o botao fica visivel ate o usuario tocar nele
                         // e atualizar. So depois disso o app segue para o painel principal.
+                        // Esconde o pill de "verificando atualizacoes" pra nao ficar duplicado
+                        // atras do botao.
                         try {
+                            statusPill.setVisibility(View.GONE);
                             btnForceUpdate.setVisibility(View.VISIBLE);
                             btnForceUpdate.setOnClickListener(v -> {
                                 Intent intent = new Intent(SplashActivity.this, UpdateActivity.class);
