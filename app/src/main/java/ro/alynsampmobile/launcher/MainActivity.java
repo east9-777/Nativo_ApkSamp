@@ -10,7 +10,6 @@ import android.os.Looper;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +24,6 @@ import com.applovin.mediation.MaxAdViewAdListener;
 import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxInterstitialAd;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 import com.joom.paranoid.Obfuscate;
 
@@ -67,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
     private ImageButton btnCloseSettings;
     private TextView playersOnlineText;
     private boolean settingsOpen = false;
+
+    private android.widget.EditText nicknameField;
 
     private View chooseServerContainer;
     private TextView server1PlayersText;
@@ -140,6 +140,10 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
         MaterialButton btnSettings = findViewById(R.id.btnSettings);
         MaterialButton btnConnect = findViewById(R.id.btnConnect);
 
+        nicknameField = findViewById(R.id.nicknameField);
+        String savedNick = getSharedPreferences("samp_settings", Context.MODE_PRIVATE).getString("nick_name", "");
+        nicknameField.setText(savedNick);
+
         btnDiscord.setOnClickListener(v -> openLink(DISCORD_URL));
         btnYoutube.setOnClickListener(v -> openLink(YOUTUBE_URL));
         btnInstagram.setOnClickListener(v -> openLink(INSTAGRAM_URL));
@@ -157,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
 
         btnSettings.setOnClickListener(v -> openSettingsPanel());
         btnCloseSettings.setOnClickListener(v -> closeSettingsPanel());
-        btnConnect.setOnClickListener(v -> showConnectDialog());
+        btnConnect.setOnClickListener(v -> connectToServer1());
     }
 
     @Override
@@ -249,94 +253,52 @@ public class MainActivity extends AppCompatActivity implements MaxAdListener, Ma
     }
 
     /**
-     * Pede o nickname e conecta direto no servidor 1 (sem tela de transicao).
+     * Conecta direto no servidor 1 usando o nickname que ja esta preenchido no
+     * campo do canto superior esquerdo da tela principal. Nao existe mais a
+     * tela/dialogo separado pedindo o nick - o botao Conectar so verifica se
+     * o campo ja tem um nick valido antes de entrar.
      */
-    private void showConnectDialog() {
-        View dialogView = getLayoutInflater().inflate(R.layout.layout_server1_connect, null);
+    private void connectToServer1() {
+        if (!Utils.isOnline(this)) {
+            Toast.makeText(this, "No internet connection!", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+        String nickname = nicknameField.getText() != null ? nicknameField.getText().toString().trim() : "";
 
-        TextView serverPlayers = dialogView.findViewById(R.id.server_players);
-        TextView serverGamemode = dialogView.findViewById(R.id.server_gamemode);
-        TextInputEditText nicknameInput = dialogView.findViewById(R.id.nickname_input_text);
-        MaterialButton connectButton = dialogView.findViewById(R.id.connect_button);
+        if (nickname.isEmpty()) {
+            Toast.makeText(this, "Please set nickname.", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        String savedNick = getSharedPreferences("samp_settings", Context.MODE_PRIVATE).getString("nick_name", "");
-        nicknameInput.setText(savedNick);
-        nicknameInput.setOnEditorActionListener((textView, i, keyEvent) -> i == EditorInfo.IME_ACTION_DONE || i == EditorInfo.IME_ACTION_NEXT || i == EditorInfo.IME_ACTION_UNSPECIFIED);
+        if (nickname.length() > 24) {
+            Toast.makeText(this, "Nickname can't be longer than 24 characters.", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        serverPlayers.setText("Players: --");
-        serverGamemode.setText("Gamemode: --");
+        if (Utils.isServerBanned(SERVER1_HOST, SERVER1_PORT)) {
+            Toast.makeText(this, "This server is banned on this launcher.", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        dialog.show();
+        getSharedPreferences("samp_settings", Context.MODE_PRIVATE).edit()
+                .putString("nick_name", nickname).apply();
 
-        new Thread(() -> {
-            try {
-                SampQuery query = new SampQuery(SERVER1_HOST, Integer.parseInt(SERVER1_PORT));
-                if (query.isOnline()) {
-                    String[] info = query.getInfo();
-                    if (info != null) {
-                        String players = "Players: " + info[1] + " / " + info[2];
-                        String gamemode = "Gamemode: " + info[4];
-                        mainHandler.post(() -> {
-                            serverPlayers.setText(players);
-                            serverGamemode.setText(gamemode);
-                        });
-                        return;
-                    }
-                }
-                mainHandler.post(() -> serverPlayers.setText(getString(R.string.server_offline_msg)));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+        SharedPreferences.Editor edit = getSharedPreferences("samp_server", Context.MODE_PRIVATE).edit();
+        edit.putString("host", SERVER1_HOST);
+        edit.putString("port", SERVER1_PORT);
+        edit.putString("password", "");
+        edit.apply();
 
-        connectButton.setOnClickListener(v -> {
-            if (!Utils.isOnline(this)) {
-                Toast.makeText(this, "No internet connection!", Toast.LENGTH_LONG).show();
-                dialog.dismiss();
-                return;
-            }
+        Utils.saveSettings(this);
 
-            String nickname = nicknameInput.getText() != null ? nicknameInput.getText().toString() : "";
-
-            if (nickname.isEmpty()) {
-                Toast.makeText(this, "Please set nickname.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if (nickname.length() > 24) {
-                Toast.makeText(this, "Nickname can't be longer than 24 characters.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if (Utils.isServerBanned(SERVER1_HOST, SERVER1_PORT)) {
-                Toast.makeText(this, "This server is banned on this launcher.", Toast.LENGTH_LONG).show();
-                dialog.dismiss();
-                return;
-            }
-
-            dialog.dismiss();
-
-            getSharedPreferences("samp_settings", Context.MODE_PRIVATE).edit()
-                    .putString("nick_name", nickname).apply();
-
-            SharedPreferences.Editor edit = getSharedPreferences("samp_server", Context.MODE_PRIVATE).edit();
-            edit.putString("host", SERVER1_HOST);
-            edit.putString("port", SERVER1_PORT);
-            edit.putString("password", "");
-            edit.apply();
-
-            Utils.saveSettings(this);
-
-            try {
-                Intent intent = new Intent(this, ro.alynsampmobile.game.SAMP.class);
-                intent.putExtra("extra_check", "alynsampmobile1337");
-                startActivity(intent);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        try {
+            Intent intent = new Intent(this, ro.alynsampmobile.game.SAMP.class);
+            intent.putExtra("extra_check", "alynsampmobile1337");
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void openSettingsPanel() {

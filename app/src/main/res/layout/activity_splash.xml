@@ -61,4 +61,31 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <!-- Botao de atualizacao obrigatoria: mesmo estilo/local do botao "Conectar" da tela
+         principal (canto inferior direito). So aparece quando o servidor acusa que os
+         arquivos do jogo estao desatualizados. Nao existe opcao de recusar - enquanto o
+         usuario nao tocar aqui e atualizar, ele nao segue para o painel principal. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnForceUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/_18sdp"
+        android:background="@drawable/pill_button_accent"
+        app:backgroundTint="@null"
+        android:fontFamily="@font/montserrat_bold"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:minWidth="@dimen/_150sdp"
+        android:paddingStart="@dimen/_20sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_20sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        android:text="@string/force_update"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/_11ssp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:elevation="0dp" />
+
 </FrameLayout>

@@ -11,6 +11,8 @@
     <string name="server2_name_default">Em breve</string>
     <string name="server3_name_default">Em breve</string>
     <string name="tap_to_connect">Toque para conectar</string>
+    <string name="nickname_hint">Nickname...</string>
+    <string name="force_update">ATUALIZAR</string>
     <string name="coming_soon">EM BREVE</string>
     <string name="coming_soon_message">Esse recurso ainda não está disponível. Fique de olho, em breve tem novidade!</string>
     <string name="connecting">Conectando…</string>

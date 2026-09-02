@@ -67,6 +67,49 @@
 
     </LinearLayout>
 
+    <!-- Campo de nickname, canto superior esquerdo. O jogador preenche aqui e o botao
+         Conectar so usa esse valor - nao existe mais a tela separada pedindo o nick. -->
+    <LinearLayout
+        android:id="@+id/nicknameArea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/_14sdp"
+        android:layout_marginTop="@dimen/_54sdp"
+        android:background="@drawable/server_picker_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/_14sdp"
+        android:paddingTop="@dimen/_6sdp"
+        android:paddingEnd="@dimen/_14sdp"
+        android:paddingBottom="@dimen/_6sdp">
+
+        <ImageView
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_people" />
+
+        <EditText
+            android:id="@+id/nicknameField"
+            android:layout_width="@dimen/_110sdp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:fontFamily="@font/montserrat_bold"
+            android:hint="@string/nickname_hint"
+            android:imeOptions="actionDone"
+            android:inputType="textNoSuggestions"
+            android:maxLength="24"
+            android:maxLines="1"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#99FFFFFF"
+            android:textSize="@dimen/_10ssp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
     <!-- Botao do topo direito: configuracoes -->
     <LinearLayout
         android:id="@+id/topRightBar"

@@ -49,6 +49,7 @@ public class SplashActivity extends AppCompatActivity implements GLSurfaceView.R
     public Messenger mMessenger;
     public Messenger mService;
     GLSurfaceView glSurfaceView;
+    MaterialButton btnForceUpdate;
 
     Logcat logcat;
 
@@ -96,6 +97,8 @@ public class SplashActivity extends AppCompatActivity implements GLSurfaceView.R
 
         glSurfaceView = findViewById(R.id.surface);
         glSurfaceView.setRenderer(this);
+
+        btnForceUpdate = findViewById(R.id.btnForceUpdate);
 
         Toast.makeText(this, "Alyn SA-MP Mobile v" + BuildConfig.VERSION_NAME, Toast.LENGTH_SHORT).show();
 
@@ -287,17 +290,16 @@ public class SplashActivity extends AppCompatActivity implements GLSurfaceView.R
                             e.printStackTrace();
                         }
                     } else if (gameStatus == UpdateActivity.GameStatus.GameFilesUpdateRequired) {
+                        // Sem opcao de recusar: o botao fica visivel ate o usuario tocar nele
+                        // e atualizar. So depois disso o app segue para o painel principal.
                         try {
-                            new AlertDialog.Builder(SplashActivity.this)
-                                    .setTitle("Update:").setMessage("Game files update required!")
-                                    .setPositiveButton("Update", (dialog, which) -> {
-                                        Intent intent = new Intent(SplashActivity.this, UpdateActivity.class);
-                                        intent.putExtra("mode", UpdateActivity.UpdateMode.GameUpdate.name());
-                                        startActivity(intent);
-                                        finish();
-                                    }).setNegativeButton("No", (dialog, which) -> {
-                                        startMain();
-                                    }).setCancelable(false).show();
+                            btnForceUpdate.setVisibility(View.VISIBLE);
+                            btnForceUpdate.setOnClickListener(v -> {
+                                Intent intent = new Intent(SplashActivity.this, UpdateActivity.class);
+                                intent.putExtra("mode", UpdateActivity.UpdateMode.GameUpdate.name());
+                                startActivity(intent);
+                                finish();
+                            });
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
