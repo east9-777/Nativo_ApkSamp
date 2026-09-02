@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace "ro.alynsampmobile.launcher"
+    namespace "com.nativo.rpg.launcher"
     compileSdk 35
 
     defaultConfig {
-        applicationId "ro.alynsampmobile.launcher"
+        applicationId "com.nativo.rpg.launcher"
         minSdk 24
         targetSdk 35
         versionCode 1700

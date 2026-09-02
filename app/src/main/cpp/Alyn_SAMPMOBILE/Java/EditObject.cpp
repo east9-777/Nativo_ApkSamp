@@ -49,7 +49,7 @@ void EditObject::cancelEdit()
 	EditObject::showGui(false);
 }
 
-extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_ui_widgets_EditObject_Click(JNIEnv* env, jobject thiz, jint button, jboolean state)
+extern "C" JNIEXPORT void JNICALL Java_com_nativo_rpg_game_ui_widgets_EditObject_Click(JNIEnv* env, jobject thiz, jint button, jboolean state)
 {
 	CPlayerPed* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
 	auto& attach = pPlayer->m_attachedObjects[EditObject::m_id].info;
@@ -187,7 +187,7 @@ extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_ui_widgets_EditObj
 	}
 }
 
-extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_ui_widgets_EditObject_Exit(JNIEnv* env, jobject thiz)
+extern "C" JNIEXPORT void JNICALL Java_com_nativo_rpg_game_ui_widgets_EditObject_Exit(JNIEnv* env, jobject thiz)
 {
 	if (pNetGame) {
 		RakNet::BitStream bsSend;
@@ -198,7 +198,7 @@ extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_ui_widgets_EditObj
 	EditObject::showGui(false);
 }
 
-extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_ui_widgets_EditObject_Save(JNIEnv* env, jobject thiz)
+extern "C" JNIEXPORT void JNICALL Java_com_nativo_rpg_game_ui_widgets_EditObject_Save(JNIEnv* env, jobject thiz)
 {
 	CPlayerPed* pPlayer = pNetGame->GetPlayerPool()->GetLocalPlayer()->GetPlayerPed();
 	auto& attach = pPlayer->m_attachedObjects[EditObject::m_id].info;

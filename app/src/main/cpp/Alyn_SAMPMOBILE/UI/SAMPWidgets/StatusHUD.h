@@ -18,6 +18,13 @@
  *
  * Icones vem de dentro do proprio APK (app/src/main/assets/hud/*.png) -
  * nao da texdb, nao de download. Ver AssetImageLoader.h/.cpp.
+ *
+ * Visibilidade: por padrao o HUD aparece sozinho quando o ped local existe
+ * (ver update()). Alem disso, a gamemode pode forcar o HUD inteiro a ficar
+ * escondido (ex: durante uma cutscene, um /admin off, um evento especial)
+ * atraves do RPC customizado ID 221 (ver ScrNativoStatusVisibility em
+ * Net/ScriptRPC.cpp), chamado via setGMVisible(). As duas condicoes (ped
+ * existe E gm nao escondeu) precisam ser verdadeiras pro HUD aparecer.
  */
 class StatusHUD : public Widget {
 public:
@@ -31,6 +38,11 @@ public:
 	// chamado quando o RPC customizado de fome/sede chega (ScriptRPC.cpp)
 	void setHunger(float percent);
 	void setThirst(float percent);
+
+	// chamado quando o RPC customizado de visibilidade chega (ScriptRPC.cpp)
+	// - controla se o HUD PODE aparecer, por decisao do servidor/GM.
+	void setGMVisible(bool visible);
+	bool gmVisible() const { return m_gmVisible; }
 
 private:
 	struct HexBar {
@@ -47,4 +59,7 @@ private:
 	HexBar m_armour;
 	HexBar m_hunger;
 	HexBar m_thirst;
+
+	// true = servidor permite exibir o HUD (default). false = GM escondeu.
+	bool m_gmVisible = true;
 };

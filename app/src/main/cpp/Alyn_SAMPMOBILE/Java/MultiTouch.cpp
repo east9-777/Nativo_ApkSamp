@@ -128,7 +128,7 @@ void MultiTouch::initialize()
 
 extern "C"
 {
-JNIEXPORT jboolean JNICALL Java_ro_alynsampmobile_game_SAMP_multiTouchEvent4Ex(JNIEnv* env, jobject obj, jint action,
+JNIEXPORT jboolean JNICALL Java_com_nativo_rpg_game_SAMP_multiTouchEvent4Ex(JNIEnv* env, jobject obj, jint action,
 		jint pointer, jint x1, jint y1, jint x2, jint y2, jint x3, jint y3, jint x4, jint y4)
 {
 	static jclass motionEvent = env->FindClass("android/view/MotionEvent");

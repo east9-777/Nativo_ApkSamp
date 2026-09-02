@@ -2144,6 +2144,29 @@ void ScrNativoStatusUpdate(RPCParameters* rpcParams)
 	}
 }
 
+// RPC customizado, mesma familia do 220 acima. Deixa o GM/gamemode forcar o
+// HUD de hexagonos (vida/colete/fome/sede) a aparecer ou sumir da tela do
+// player, independente do estado automatico (que so olha se o ped existe).
+// Formato: 1 byte (uint8/bool: 0 = esconder, 1 = mostrar).
+static int RPC_NativoStatusVisibility = 221;
+
+void ScrNativoStatusVisibility(RPCParameters* rpcParams)
+{
+	auto Data = reinterpret_cast<unsigned char*>(rpcParams->input);
+	int iBitLength = rpcParams->numberOfBitsOfData;
+
+	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
+
+	unsigned char byteVisible = 1;
+	bsData.Read(byteVisible);
+
+	spdlog::info("ScriptRPC: ScrNativoStatusVisibility visible={}", byteVisible);
+
+	if (pUI) {
+		pUI->statushud()->setGMVisible(byteVisible != 0);
+	}
+}
+
 void RegisterScriptRPCs(RakClientInterface* pRakClient)
 {
 	spdlog::info("Registering script RPC's..");
@@ -2179,6 +2202,7 @@ void RegisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrHideTextDraw, ScrHideTextDraw);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrTextDrawSetString, ScrTextDrawSetString);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoStatusUpdate, ScrNativoStatusUpdate);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoStatusVisibility, ScrNativoStatusVisibility);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrAddGangZone, ScrAddGangZone);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrRemoveGangZone, ScrGangZoneDestroy);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrFlashGangZone, ScrGangZoneFlash);

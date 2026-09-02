@@ -32,5 +32,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Alyn SA-MP Mobile"
+rootProject.name = "NativoRPG Mobile"
 include(":app")

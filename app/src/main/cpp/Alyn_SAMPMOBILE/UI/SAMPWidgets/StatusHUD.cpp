@@ -38,7 +38,11 @@ setVisible(false);
 return;
 	}
 
-setVisible(true);
+// So aparece se o ped existe E o servidor (GM) nao escondeu o HUD.
+setVisible(m_gmVisible);
+if (!m_gmVisible) {
+	return;
+}
 m_health.value = pPlayerPed->m_fHealth / 100.0f;
 m_armour.value = pPlayerPed->m_fArmour / 100.0f;
 
@@ -56,6 +60,16 @@ void StatusHUD::setHunger(float percent)
 void StatusHUD::setThirst(float percent)
 {
 	m_thirst.value = percent < 0.0f ? 0.0f : (percent > 1.0f ? 1.0f : percent);
+}
+
+void StatusHUD::setGMVisible(bool visible)
+{
+	m_gmVisible = visible;
+	// aplica na hora, sem esperar o proximo update() (evita 1 frame de atraso
+	// visivel quando o GM manda esconder o HUD).
+	if (!m_gmVisible) {
+		setVisible(false);
+	}
 }
 
 void StatusHUD::drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& center, float radius)

@@ -173,7 +173,7 @@ void Java::exitGame()
 
 const std::string EXPECTED_SIGNATURE(OBFUSCATE("89cb277c5cd1a90145acb3c2a89cea995bfbd3b3e5ebe2b180d2248efc4aa041"));
 
-extern "C" JNIEXPORT jboolean JNICALL Java_ro_alynsampmobile_launcher_utils_SignatureChecker_nativeCheckSignature(JNIEnv* env, jclass clazz, jstring computedSignature)
+extern "C" JNIEXPORT jboolean JNICALL Java_com_nativo_rpg_launcher_utils_SignatureChecker_nativeCheckSignature(JNIEnv* env, jclass clazz, jstring computedSignature)
 {
 	const char* computedSignatureCStr = env->GetStringUTFChars(computedSignature, nullptr);
 	std::string computedSignatureStr(computedSignatureCStr);
@@ -183,7 +183,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_ro_alynsampmobile_launcher_utils_Sign
 	return JNI_TRUE;
 }
 
-extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_SAMP_initializeSAMP(JNIEnv* env, jobject sampObj, jobject uiObj, jstring gameDir, jboolean isOffline)
+extern "C" JNIEXPORT void JNICALL Java_com_nativo_rpg_game_SAMP_initializeSAMP(JNIEnv* env, jobject sampObj, jobject uiObj, jstring gameDir, jboolean isOffline)
 {
 	const char* gameDirCStr = env->GetStringUTFChars(gameDir, nullptr);
 	std::string gameDirStr(gameDirCStr);
@@ -198,13 +198,13 @@ extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_SAMP_initializeSAM
 // Recebe o AssetManager do Android (chamado do SAMP.java, uma vez, logo no
 // inicio) - a partir disso, o C++ consegue ler arquivos que estao dentro do
 // proprio APK (app/src/main/assets/), sem depender de nada baixado.
-extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_SAMP_setAssetManager(JNIEnv* env, jobject sampObj, jobject assetManagerObj)
+extern "C" JNIEXPORT void JNICALL Java_com_nativo_rpg_game_SAMP_setAssetManager(JNIEnv* env, jobject sampObj, jobject assetManagerObj)
 {
 	AAssetManager* mgr = AAssetManager_fromJava(env, assetManagerObj);
 	AssetImageLoader_SetAssetManager(mgr);
 }
 
-extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_ui_UI_keyboardSend(JNIEnv* env, jobject obj, jbyteArray str)
+extern "C" JNIEXPORT void JNICALL Java_com_nativo_rpg_game_ui_UI_keyboardSend(JNIEnv* env, jobject obj, jbyteArray str)
 {
 	jboolean isCopy = true;
 	jbyte* msg = env->GetByteArrayElements(str, &isCopy);
@@ -219,7 +219,7 @@ extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_ui_UI_keyboardSend
 	env->ReleaseByteArrayElements(str, msg, JNI_ABORT);
 }
 
-extern "C" JNIEXPORT void JNICALL Java_ro_alynsampmobile_game_ui_UI_sendDialogResponse(JNIEnv* env, jobject obj, jint dialog_id, jint button_id, jint list_item, jbyteArray str)
+extern "C" JNIEXPORT void JNICALL Java_com_nativo_rpg_game_ui_UI_sendDialogResponse(JNIEnv* env, jobject obj, jint dialog_id, jint button_id, jint list_item, jbyteArray str)
 {
 	spdlog::info("Java_com_samp_game_ui_UI_sendDialogResponse");
 
