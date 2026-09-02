@@ -312,6 +312,20 @@ void ImGuiRenderer::drawHexagonProgress(const ImVec2& center, float radius, floa
 	}
 }
 
+void ImGuiRenderer::drawArc(const ImVec2& center, float radius, float thickness, const ImColor& color, float angleMinDeg, float angleMaxDeg)
+{
+	if (angleMaxDeg <= angleMinDeg) return;
+
+	float angleMin = angleMinDeg * (IM_PI / 180.0f);
+	float angleMax = angleMaxDeg * (IM_PI / 180.0f);
+
+	// mais segmentos pra arcos maiores, pra nao ficar poligonal
+	int segments = ImClamp((int) (radius * 0.35f), 16, 64);
+
+	m_drawList->PathArcTo(center, radius, angleMin, angleMax, segments);
+	m_drawList->PathStroke(color, 0, thickness);
+}
+
 void ImGuiRenderer::pushClipRect(const ImVec2& min, const ImVec2& max, bool intersect)
 {
 	m_drawList->PushClipRect(min, max, intersect);

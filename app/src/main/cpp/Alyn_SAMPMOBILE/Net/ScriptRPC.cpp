@@ -2167,6 +2167,46 @@ void ScrNativoStatusVisibility(RPCParameters* rpcParams)
 	}
 }
 
+// RPC customizado, mesma familia do 220/221. Manda o combustivel de UM
+// veiculo especifico pro player que esta dirigindo ele - diferente de
+// fome/sede (que e' por player), combustivel e' por VEICULO, entao o
+// payload leva o VehicleID junto. Formato: VEHICLEID (2 bytes) + uint8
+// combustivel (0-100). Ver Combustivel.pwn / AtualizarCombustivelCliente()
+// no lado Pawn. Vida do carro NAO tem RPC porque SpeedometerHUD::update()
+// ja le pVeh->fHealth direto do jogo, igual StatusHUD faz com vida do player.
+static int RPC_NativoVehicleFuel = 222;
+
+void ScrNativoVehicleFuel(RPCParameters* rpcParams)
+{
+	auto Data = reinterpret_cast<unsigned char*>(rpcParams->input);
+	int iBitLength = rpcParams->numberOfBitsOfData;
+
+	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
+
+	VEHICLEID VehicleID;
+	unsigned char byteFuel = 0;
+	bsData.Read(VehicleID);
+	bsData.Read(byteFuel);
+
+	spdlog::info("ScriptRPC: ScrNativoVehicleFuel vehicleid={} fuel={}", VehicleID, byteFuel);
+
+	if (!pUI) return;
+
+	// So aplica se o player local estiver dirigindo EXATAMENTE esse
+	// veiculo agora - protege contra a mensagem chegar depois dele ja ter
+	// trocado de carro.
+	sa::CPed* pPed = GamePool_FindPlayerPed();
+	if (!pPed || !pPed->IsInVehicle()) return;
+
+	CVehiclePool* pVehiclePool = pNetGame->GetVehiclePool();
+	if (!pVehiclePool) return;
+
+	VEHICLEID localVehicleId = pVehiclePool->FindIDFromGtaPtr(pPed->pVehicle);
+	if (localVehicleId != VehicleID) return;
+
+	pUI->speedometer()->setFuel(byteFuel / 100.0f);
+}
+
 void RegisterScriptRPCs(RakClientInterface* pRakClient)
 {
 	spdlog::info("Registering script RPC's..");
@@ -2203,6 +2243,7 @@ void RegisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrTextDrawSetString, ScrTextDrawSetString);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoStatusUpdate, ScrNativoStatusUpdate);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoStatusVisibility, ScrNativoStatusVisibility);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoVehicleFuel, ScrNativoVehicleFuel);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrAddGangZone, ScrAddGangZone);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrRemoveGangZone, ScrGangZoneDestroy);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrFlashGangZone, ScrGangZoneFlash);
@@ -2310,6 +2351,8 @@ void UnregisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrHideTextDraw);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrTextDrawSetString);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_NativoStatusUpdate);
+	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_NativoStatusVisibility); // faltava desregistrar este (bug pre-existente, corrigido de brinde)
+	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_NativoVehicleFuel);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrAddGangZone);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrRemoveGangZone);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrFlashGangZone);

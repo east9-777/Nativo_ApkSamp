@@ -25,6 +25,13 @@ public:
 	void drawHexagonFilled(const ImVec2& center, float radius, const ImColor& color);
 	void drawHexagonProgress(const ImVec2& center, float radius, float thickness, const ImColor& color, float percent);
 
+	// Arco de circulo generico (usado pelo velocimetro). Angulos em GRAUS,
+	// na convencao do ImGui: 0 = direita (3h), 90 = baixo (6h), 180 =
+	// esquerda (9h), 270 = cima (12h), sentido horario. angleMaxDeg pode
+	// passar de 360 pra "dar a volta" (ex: 135 a 405 = 270 graus de sweep
+	// comecando no canto inferior-esquerdo).
+	void drawArc(const ImVec2& center, float radius, float thickness, const ImColor& color, float angleMinDeg, float angleMaxDeg);
+
 	void pushClipRect(const ImVec2& min, const ImVec2& max, bool intersect = false);
 	void popClipRect();
 

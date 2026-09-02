@@ -100,6 +100,17 @@ bool UI::initialize()
 // It must not force player creation while the game is loading.
 m_statusHud->setVisible(false);
 
+	// Velocimetro em arco (velocidade/vida do carro/combustivel), canto
+	// inferior direito. Raio principal 130 + raio externo 154 (vida/
+	// combustivel) => ~320x320 cobre com folga.
+	m_speedometerHud = new SpeedometerHUD();
+	this->addChild(m_speedometerHud);
+	m_speedometerHud->setSize(ImVec2(320.0f, 320.0f));
+	m_speedometerHud->setPosition(ImVec2(displaySize().x - 340.0f, displaySize().y - 340.0f));
+	// Mesmo motivo do m_statusHud acima: so aparece sozinho quando o ped
+	// local existir E estiver dentro de um veiculo (ver SpeedometerHUD::update()).
+	m_speedometerHud->setVisible(false);
+
 	/*auto copyright = new Label(OBFUSCATE("Alyn_SAMPMOBILE"), ImColor(1.0f, 1.0f, 1.0f), true, UISettings::fontSize() / 3);
 	this->addChild(copyright);
 	copyright->setPosition(ImVec2(RsGlobal->maximumWidth * 0.83, ScaleY(5)));*/
