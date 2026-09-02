@@ -90,10 +90,12 @@ void SpeedometerHUD::draw(ImGuiRenderer* renderer)
 
 	ImVec2 basePos = absolutePosition();
 
-	float radius = 130.0f;       // raio do arco principal (velocidade)
-	float outerRadius = radius + 24.0f; // raio dos arcos de vida/combustivel
+	// Raios maiores e arcos mais grossos que a v1 - a v1 estava fina/pequena
+	// de mais numa tela de celular de verdade.
+	float radius = 150.0f;              // raio do arco principal (velocidade)
+	float outerRadius = radius + 34.0f; // raio dos arcos de vida/combustivel
 
-	ImVec2 center(basePos.x + outerRadius + 4.0f, basePos.y + outerRadius + 4.0f);
+	ImVec2 center(basePos.x + outerRadius + 8.0f, basePos.y + outerRadius + 8.0f);
 
 	// ===== arco de velocidade (amarelo) - o principal, 270 graus =====
 	// Convencao de angulo do ImGui: 0 = direita (3h), 90 = baixo (6h),
@@ -103,39 +105,45 @@ void SpeedometerHUD::draw(ImGuiRenderer* renderer)
 	// total de 270 graus, igual painel de carro de verdade.
 	const float speedAngleMin = 135.0f;
 	const float speedAngleMax = 405.0f;
+	const float speedThickness = 20.0f; // era 12 - ficava fino de mais
 
 	float speedPercent = m_speedKmh / kMaxSpeedKmh;
 	if (speedPercent > 1.0f) speedPercent = 1.0f;
 
-	drawTrack(renderer, center, radius, 12.0f, speedAngleMin, speedAngleMax, ImColor(35, 35, 35, 220));
+	drawTrack(renderer, center, radius, speedThickness, speedAngleMin, speedAngleMax, ImColor(35, 35, 35, 220));
 	if (speedPercent > 0.0f) {
-		renderer->drawArc(center, radius, 12.0f, ImColor(230, 205, 40),
+		renderer->drawArc(center, radius, speedThickness, ImColor(230, 205, 40),
 			speedAngleMin, speedAngleMin + (speedAngleMax - speedAngleMin) * speedPercent);
 	}
 
-	// ===== arco de vida do veiculo (branco) - esquerda/topo, por fora =====
-	// Ocupa so a primeira metade do sweep de velocidade (canto inferior-
-	// esquerdo ate o topo). Enche crescendo do inicio (canto) pro topo.
+	// ===== arco de vida do veiculo (branco) - canto inferior-esquerdo =====
+	// Antes ia ate o topo (135->270) e o de combustivel COMECAVA no topo
+	// (270->405) - as duas se encontravam exatamente em cima e formavam uma
+	// "ponte" continua. Agora cada uma cobre so METADE desse sweep (~67.5
+	// graus), ficando perto do canto de baixo, com um vao vazio no topo -
+	// igual a foto de referencia, onde vida e combustivel nao se tocam.
 	const float healthAngleMin = 135.0f;
-	const float healthAngleMax = 270.0f;
+	const float healthAngleMax = 135.0f + (270.0f - 135.0f) / 2.0f; // 202.5
+	const float sideThickness = 14.0f; // era 7 - ficava fino de mais
 
-	drawTrack(renderer, center, outerRadius, 7.0f, healthAngleMin, healthAngleMax, ImColor(60, 60, 60, 180));
+	drawTrack(renderer, center, outerRadius, sideThickness, healthAngleMin, healthAngleMax, ImColor(60, 60, 60, 180));
 	if (m_health > 0.0f) {
-		renderer->drawArc(center, outerRadius, 7.0f, ImColor(240, 240, 240),
+		renderer->drawArc(center, outerRadius, sideThickness, ImColor(240, 240, 240),
 			healthAngleMin, healthAngleMin + (healthAngleMax - healthAngleMin) * m_health);
 	}
 
-	// ===== arco de combustivel (verde) - direita/topo, por fora =====
-	// Espelho do arco de vida: topo ate o canto inferior-direito. Enche
-	// crescendo do FIM (canto) pro topo, pra visualmente "nascer" do mesmo
-	// lugar que a barra de vida nasce (o canto de baixo).
-	const float fuelAngleMin = 270.0f;
+	// ===== arco de combustivel (vermelho) - canto inferior-direito =====
+	// Espelho do arco de vida: metade do sweep, colada no canto de baixo-
+	// direita, crescendo do canto (405) pra cima conforme o tanque enche -
+	// nunca chega no topo, mesmo com o tanque cheio, deixando o vao contra
+	// o arco de vida (ver comentario acima).
+	const float fuelAngleMin = 405.0f - (270.0f - 135.0f) / 2.0f; // 337.5
 	const float fuelAngleMax = 405.0f;
 
-	drawTrack(renderer, center, outerRadius, 7.0f, fuelAngleMin, fuelAngleMax, ImColor(60, 60, 60, 180));
+	drawTrack(renderer, center, outerRadius, sideThickness, fuelAngleMin, fuelAngleMax, ImColor(60, 60, 60, 180));
 	if (m_fuel > 0.0f) {
 		float fuelSweep = (fuelAngleMax - fuelAngleMin) * m_fuel;
-		renderer->drawArc(center, outerRadius, 7.0f, ImColor(70, 195, 90), fuelAngleMax - fuelSweep, fuelAngleMax);
+		renderer->drawArc(center, outerRadius, sideThickness, ImColor(215, 45, 45), fuelAngleMax - fuelSweep, fuelAngleMax);
 	}
 
 	// ===== numero central (velocidade) + "KM/H" =====
@@ -143,27 +151,30 @@ void SpeedometerHUD::draw(ImGuiRenderer* renderer)
 	snprintf(speedBuf, sizeof(speedBuf), "%d", (int) (m_speedKmh + 0.5f));
 	std::string speedStr(speedBuf);
 
-	ImVec2 speedSize = renderer->calculateTextSize(speedStr, 46.0f);
+	const float speedFontSize = 64.0f; // era 46 - numero ficava pequeno de mais
+	ImVec2 speedSize = renderer->calculateTextSize(speedStr, speedFontSize);
 	renderer->drawText(
-		ImVec2(center.x - speedSize.x / 2.0f, center.y - speedSize.y / 2.0f - 12.0f),
-		ImColor(255, 255, 255), speedStr, true, 46.0f);
+		ImVec2(center.x - speedSize.x / 2.0f, center.y - speedSize.y / 2.0f - 14.0f),
+		ImColor(255, 255, 255), speedStr, true, speedFontSize);
 
 	std::string unitStr = "KM/H";
-	ImVec2 unitSize = renderer->calculateTextSize(unitStr, 16.0f);
+	const float unitFontSize = 20.0f; // era 16
+	ImVec2 unitSize = renderer->calculateTextSize(unitStr, unitFontSize);
 	renderer->drawText(
-		ImVec2(center.x - unitSize.x / 2.0f, center.y + speedSize.y / 2.0f - 4.0f),
-		ImColor(190, 190, 190), unitStr, false, 16.0f);
+		ImVec2(center.x - unitSize.x / 2.0f, center.y + speedSize.y / 2.0f - 2.0f),
+		ImColor(190, 190, 190), unitStr, false, unitFontSize);
 
 	// ===== rotulo "100%" (vida) perto do inicio do arco branco =====
 	char healthBuf[8];
 	snprintf(healthBuf, sizeof(healthBuf), "%d%%", (int) (m_health * 100.0f + 0.5f));
 	std::string healthStr(healthBuf);
 
+	const float healthFontSize = 22.0f; // era 18
 	float healthLabelAngle = healthAngleMin * (float) M_PI / 180.0f;
 	ImVec2 healthLabelPos(
-		center.x + (outerRadius + 26.0f) * cosf(healthLabelAngle) - 24.0f,
-		center.y + (outerRadius + 26.0f) * sinf(healthLabelAngle) - 10.0f);
-	renderer->drawText(healthLabelPos, ImColor(255, 255, 255), healthStr, true, 18.0f);
+		center.x + (outerRadius + 30.0f) * cosf(healthLabelAngle) - 28.0f,
+		center.y + (outerRadius + 30.0f) * sinf(healthLabelAngle) - 12.0f);
+	renderer->drawText(healthLabelPos, ImColor(255, 255, 255), healthStr, true, healthFontSize);
 
 	Widget::draw(renderer);
 }

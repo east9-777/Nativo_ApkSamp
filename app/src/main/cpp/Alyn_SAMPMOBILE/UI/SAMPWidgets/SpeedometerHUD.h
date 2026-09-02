@@ -5,7 +5,10 @@
 /**
  * SpeedometerHUD: velocimetro circular estilo "dashboard" (arco amarelo de
  * velocidade no meio, numero grande no centro, arco branco de vida do
- * veiculo na esquerda, arco verde de combustivel na direita).
+ * veiculo na esquerda, arco vermelho de combustivel na direita). Vida e
+ * combustivel ocupam so metade do sweep de cada lado (perto dos cantos de
+ * baixo), deixando um vao sem preenchimento no topo - igual a foto de
+ * referencia, onde as duas barras NAO se encontram em cima.
  *
  * Velocidade e vida do veiculo sao lidas sozinhas, direto do jogo via
  * GamePool_FindPlayerPed()->pVehicle - igual o StatusHUD faz com vida do
