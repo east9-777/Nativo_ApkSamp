@@ -98,8 +98,8 @@ void StatusHUD::drawBar(ImGuiRenderer* renderer, HexBar& bar, const ImVec2& cent
 
 void StatusHUD::draw(ImGuiRenderer* renderer)
 {
-	float radius = 26.0f;
-	float gap = 10.0f;
+	float radius = 32.0f;
+	float gap = 12.0f;
 	float diameter = radius * 2.0f;
 
 	ImVec2 basePos = absolutePosition();

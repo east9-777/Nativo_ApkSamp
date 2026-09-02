@@ -90,11 +90,12 @@ bool UI::initialize()
 	m_scoreboard->setVisible(false);
 
 	// HUD de status (vida/colete/fome/sede), canto inferior esquerdo.
-	// Tamanho: 4 hexagonos de raio 42 + 3 espacos de 16 = ~320 de largura.
+	// Tamanho: 4 hexagonos de raio 32 + 3 espacos de 12 = ~292 de largura,
+	// 64 de altura. Deixamos uma folga (300x76) pra nao cortar a borda.
 	m_statusHud = new StatusHUD();
 	this->addChild(m_statusHud);
-	m_statusHud->setSize(ImVec2(230.0f, 70.0f));
-	m_statusHud->setPosition(ImVec2(20.0f, displaySize().y - 90.0f));
+	m_statusHud->setSize(ImVec2(300.0f, 76.0f));
+	m_statusHud->setPosition(ImVec2(20.0f, displaySize().y - 96.0f));
 // The HUD enables itself after an existing GTA local ped is available.
 // It must not force player creation while the game is loading.
 m_statusHud->setVisible(false);

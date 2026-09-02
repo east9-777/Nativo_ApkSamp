@@ -19,12 +19,13 @@
  * Icones vem de dentro do proprio APK (app/src/main/assets/hud/*.png) -
  * nao da texdb, nao de download. Ver AssetImageLoader.h/.cpp.
  *
- * Visibilidade: por padrao o HUD aparece sozinho quando o ped local existe
- * (ver update()). Alem disso, a gamemode pode forcar o HUD inteiro a ficar
- * escondido (ex: durante uma cutscene, um /admin off, um evento especial)
- * atraves do RPC customizado ID 221 (ver ScrNativoStatusVisibility em
- * Net/ScriptRPC.cpp), chamado via setGMVisible(). As duas condicoes (ped
- * existe E gm nao escondeu) precisam ser verdadeiras pro HUD aparecer.
+ * Visibilidade: por padrao o HUD comeca ESCONDIDO quando o player entra no
+ * servidor (m_gmVisible = false). Ele so aparece depois que a gamemode
+ * manda mostrar, atraves do RPC customizado ID 221 (ver
+ * ScrNativoStatusVisibility em Net/ScriptRPC.cpp / MostrarNecessidades()
+ * no lado Pawn), chamado via setGMVisible(true). Mesmo com o HUD liberado
+ * pela gamemode, ele so desenha vida/colete de fato quando o ped local
+ * existe (ver update()) - as duas condicoes precisam ser verdadeiras.
  */
 class StatusHUD : public Widget {
 public:
@@ -60,6 +61,7 @@ private:
 	HexBar m_hunger;
 	HexBar m_thirst;
 
-	// true = servidor permite exibir o HUD (default). false = GM escondeu.
-	bool m_gmVisible = true;
+	// true = servidor permite exibir o HUD. false = escondido (default: so
+	// aparece quando a gamemode manda mostrar via setGMVisible/RPC 221).
+	bool m_gmVisible = false;
 };
