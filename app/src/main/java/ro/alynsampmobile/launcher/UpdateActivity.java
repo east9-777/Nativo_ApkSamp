@@ -100,7 +100,7 @@ public class UpdateActivity extends AppCompatActivity {
                 case 2:
                     Log.i("UpdateActivity", "UpdateService.FINISH_UPDATE_GAME");
                     resetProgress(true, 100, 100);
-                    ((MaterialTextView) findViewById(R.id.update_state)).setText("Updating...");
+                    ((MaterialTextView) findViewById(R.id.update_state)).setText("Atualizando...");
                     if (msg.getData().getBoolean(NotificationCompat.CATEGORY_STATUS, false)) {
                         startActivity(new Intent(UpdateActivity.this, SplashActivity.class));
                         finish();
@@ -129,7 +129,7 @@ public class UpdateActivity extends AppCompatActivity {
                                 break;
                             case CheckUpdate:
                             case DownloadGame:
-                                ((MaterialTextView) findViewById(R.id.update_state)).setText("Updating game...");
+                                ((MaterialTextView) findViewById(R.id.update_state)).setText("Atualizando o jogo...");
                                 if (msg.getData().getBoolean("withProgress", false)) {
                                     long total = msg.getData().getLong("total", 0);
                                     long current = msg.getData().getLong("current", 0);
@@ -143,7 +143,7 @@ public class UpdateActivity extends AppCompatActivity {
                                 }
                                 break;
                             case DownloadGameFiles:
-                                ((MaterialTextView) findViewById(R.id.update_state)).setText("Updating game files...");
+                                ((MaterialTextView) findViewById(R.id.update_state)).setText("Atualizando arquivos do jogo...");
                                 if (msg.getData().getBoolean("withProgress", false)) {
                                     long total = msg.getData().getLong("total", 0);
                                     long current = msg.getData().getLong("current", 0);
@@ -197,7 +197,7 @@ public class UpdateActivity extends AppCompatActivity {
         hideSystemUI();
 
         resetProgress(false, 0, 0);
-        ((MaterialTextView) findViewById(R.id.update_state)).setText("Preparing...");
+        ((MaterialTextView) findViewById(R.id.update_state)).setText("Preparando...");
 
         ((MaterialTextView) findViewById(R.id.ahahaha)).setText(Utils.copyright);
 

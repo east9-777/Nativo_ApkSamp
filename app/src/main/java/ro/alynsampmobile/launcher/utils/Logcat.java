@@ -80,7 +80,7 @@ public final class Logcat {
         public LogDumper(String str, String str2) {
             Intrinsics.checkNotNullParameter(str, "mPID");
             this.mPID = str;
-            File file = new File(str2, "Alyn_SAMPMOBILE.log");
+            File file = new File(str2, "Nativo_SAMPMOBILE.log");
             if (file.exists()) {
                 if (file.length() > 33554432) {
                     file.delete();

@@ -102,7 +102,7 @@ public class SplashActivity extends AppCompatActivity implements GLSurfaceView.R
         btnForceUpdate = findViewById(R.id.btnForceUpdate);
         statusPill = findViewById(R.id.statusPill);
 
-        Toast.makeText(this, "Alyn SA-MP Mobile v" + BuildConfig.VERSION_NAME, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Nativo SA-MP Mobile v" + BuildConfig.VERSION_NAME, Toast.LENGTH_SHORT).show();
 
         if (EasyPermissions.hasPermissions(this, permissions)) {
             startApp();
