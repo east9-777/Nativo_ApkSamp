@@ -437,6 +437,7 @@ DECL_HOOK(uint32_t, Idle, void *param, bool firstFrame)
 	{
 		pUI->statushud()->update();
 		pUI->speedometer()->update();
+		pUI->notifications()->update();
 		pUI->render();
 	}
 

@@ -2207,6 +2207,75 @@ void ScrNativoVehicleFuel(RPCParameters* rpcParams)
 	pUI->speedometer()->setFuel(byteFuel / 100.0f);
 }
 
+// RPC customizado, mesma familia do 220/221/222. Dispara uma notificacao
+// (card estilo toast, ver UI/SAMPWidgets/NotificationManager.h) na tela do
+// player. NAO tem relacao com o Notification_Show/NotificationNT9 que ja
+// existe em outro lugar da GM de voces - esse aqui e' um sistema
+// independente, com nomenclatura propria do lado Pawn (ToastNotify_*/
+// ToastCategory, ver Toast.pwn) pra nunca colidir com aquele outro. Sem
+// titulo na chamada simples (ToastNotify_Show) porque o titulo padrao vem
+// da categoria no client; ToastNotify_ShowAdvanced no lado Pawn permite um
+// titulo customizado, duracao/prioridade diferente, etc.
+//
+// Formato do payload (BS_WriteValue, mesma familia PR_* do Pawn.RakNet):
+//   uint8  categoria     (ToastCategory no Pawn - mesma ordem do enum NotificationCategory no client)
+//   uint8  prioridade    (0=Low, 1=Normal, 2=High, 3=Critical)
+//   uint8  mostrarBarra  (0/1)
+//   uint16 duracaoMs     (0 = usa o padrao da categoria)
+//   PR_STRING8 titulo    (string vazia = usa o titulo padrao da categoria)
+//   PR_STRING8 mensagem
+static int RPC_NativoNotificationShow = 223;
+
+void ScrNativoNotificationShow(RPCParameters* rpcParams)
+{
+	auto Data = reinterpret_cast<unsigned char*>(rpcParams->input);
+	int iBitLength = rpcParams->numberOfBitsOfData;
+
+	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
+
+	unsigned char byteCategory = 0;
+	unsigned char bytePriority = 1;
+	unsigned char byteShowProgress = 1;
+	unsigned short wDurationMs = 0;
+	bsData.Read(byteCategory);
+	bsData.Read(bytePriority);
+	bsData.Read(byteShowProgress);
+	bsData.Read(wDurationMs);
+
+	// PR_STRING8: 1 byte de tamanho + N bytes de conteudo (sem terminador).
+	// Formato conforme o comentario do proprio Pawn_RakNet.inc
+	// ("PR_STRING8, // unsigned char + char[]") - se o plugin de voces
+	// serializar diferente disso, e' so aqui que precisa ajustar.
+	unsigned char byteTitleLen = 0;
+	char szTitle[64];
+	memset(szTitle, 0, sizeof(szTitle));
+	bsData.Read(byteTitleLen);
+	if (byteTitleLen > 0 && byteTitleLen < sizeof(szTitle)) {
+		bsData.Read(szTitle, byteTitleLen);
+	}
+
+	unsigned char byteMessageLen = 0;
+	char szMessage[256];
+	memset(szMessage, 0, sizeof(szMessage));
+	bsData.Read(byteMessageLen);
+	if (byteMessageLen > 0 && byteMessageLen < sizeof(szMessage)) {
+		bsData.Read(szMessage, byteMessageLen);
+	}
+
+	spdlog::info("ScriptRPC: ScrNativoNotificationShow category={} priority={} duration={} title='{}' msg='{}'",
+		byteCategory, bytePriority, wDurationMs, szTitle, szMessage);
+
+	if (!pUI) return;
+
+	pUI->notifications()->show(
+		(NotificationCategory) byteCategory,
+		std::string(szTitle),
+		std::string(szMessage),
+		(uint32_t) wDurationMs,
+		(NotificationPriority) bytePriority,
+		byteShowProgress != 0);
+}
+
 void RegisterScriptRPCs(RakClientInterface* pRakClient)
 {
 	spdlog::info("Registering script RPC's..");
@@ -2244,6 +2313,7 @@ void RegisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoStatusUpdate, ScrNativoStatusUpdate);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoStatusVisibility, ScrNativoStatusVisibility);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoVehicleFuel, ScrNativoVehicleFuel);
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoNotificationShow, ScrNativoNotificationShow);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrAddGangZone, ScrAddGangZone);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrRemoveGangZone, ScrGangZoneDestroy);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrFlashGangZone, ScrGangZoneFlash);
@@ -2353,6 +2423,7 @@ void UnregisterScriptRPCs(RakClientInterface* pRakClient)
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_NativoStatusUpdate);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_NativoStatusVisibility); // faltava desregistrar este (bug pre-existente, corrigido de brinde)
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_NativoVehicleFuel);
+	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_NativoNotificationShow);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrAddGangZone);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrRemoveGangZone);
 	pRakClient->UnregisterAsRemoteProcedureCall(&RPC_ScrFlashGangZone);

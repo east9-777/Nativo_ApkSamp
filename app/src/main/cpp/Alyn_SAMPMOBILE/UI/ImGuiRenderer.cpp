@@ -326,6 +326,17 @@ void ImGuiRenderer::drawArc(const ImVec2& center, float radius, float thickness,
 	m_drawList->PathStroke(color, 0, thickness);
 }
 
+void ImGuiRenderer::drawRoundedRectFilled(const ImVec2& min, const ImVec2& max, float rounding, const ImColor& color)
+{
+	m_drawList->AddRectFilled(min, max, color, rounding);
+}
+
+void ImGuiRenderer::drawCircleFilled(const ImVec2& center, float radius, const ImColor& color)
+{
+	int segments = ImClamp((int) (radius * 0.5f), 12, 48);
+	m_drawList->AddCircleFilled(center, radius, color, segments);
+}
+
 void ImGuiRenderer::pushClipRect(const ImVec2& min, const ImVec2& max, bool intersect)
 {
 	m_drawList->PushClipRect(min, max, intersect);

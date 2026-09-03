@@ -112,6 +112,19 @@ m_statusHud->setVisible(false);
 	// local existir E estiver dentro de um veiculo (ver SpeedometerHUD::update()).
 	m_speedometerHud->setVisible(false);
 
+	// NotificationManager: cobre a tela INTEIRA (posicao 0,0 + tamanho =
+	// displaySize()) porque ele mesmo calcula onde cada card entra (canto/
+	// centro configurado via setScreenPosition() - default TopRight) e
+	// empilha varios cards ao mesmo tempo. Diferente do StatusHUD/
+	// SpeedometerHUD, aqui a "caixa" do widget nao e' o tamanho visual de
+	// UM elemento, e' a area inteira que ele tem pra desenhar quantos
+	// cards precisar.
+	m_notificationManager = new NotificationManager();
+	this->addChild(m_notificationManager);
+	m_notificationManager->setSize(displaySize());
+	m_notificationManager->setPosition(ImVec2(0.0f, 0.0f));
+	m_notificationManager->setVisible(false); // liga sozinho quando tiver alguma notificacao ativa (ver NotificationManager::update())
+
 	/*auto copyright = new Label(OBFUSCATE("Alyn_SAMPMOBILE"), ImColor(1.0f, 1.0f, 1.0f), true, UISettings::fontSize() / 3);
 	this->addChild(copyright);
 	copyright->setPosition(ImVec2(RsGlobal->maximumWidth * 0.83, ScaleY(5)));*/

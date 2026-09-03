@@ -32,6 +32,11 @@ public:
 	// comecando no canto inferior-esquerdo).
 	void drawArc(const ImVec2& center, float radius, float thickness, const ImColor& color, float angleMinDeg, float angleMaxDeg);
 
+	// Card branco arredondado das notificacoes + miolo colorido do icone
+	// hexagonal. rounding em pixels (raio do canto).
+	void drawRoundedRectFilled(const ImVec2& min, const ImVec2& max, float rounding, const ImColor& color);
+	void drawCircleFilled(const ImVec2& center, float radius, const ImColor& color);
+
 	void pushClipRect(const ImVec2& min, const ImVec2& max, bool intersect = false);
 	void popClipRect();
 
