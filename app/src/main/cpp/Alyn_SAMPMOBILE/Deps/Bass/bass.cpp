@@ -37,6 +37,7 @@ int (*BASS_ChannelSetPosition) (uint32_t, uint64_t, uint32_t);
 int (*BASS_ChannelIsActive) (uint32_t);
 int (*BASS_ChannelSlideAttribute) (uint32_t, uint32_t, float, uint32_t);
 int (*BASS_ChannelSet3DAttributes) (uint32_t, int, float, float, int, int, float);
+int (*BASS_StreamCreateFile) (bool, const void*, uint64_t, uint64_t, uint32_t);
 int (*BASS_ChannelSet3DPosition) (uint32_t, const BASS_3DVECTOR*, const BASS_3DVECTOR*, const BASS_3DVECTOR*);
 int (*BASS_SetVolume) (float);
 
