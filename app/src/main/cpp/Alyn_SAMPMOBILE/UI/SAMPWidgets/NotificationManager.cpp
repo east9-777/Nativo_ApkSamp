@@ -79,7 +79,10 @@ float NotificationManager::anchorYStart() const
 		case NotificationPosition::TopLeft:
 		case NotificationPosition::TopCenter:
 		case NotificationPosition::TopRight:
-			return kScreenMargin;
+			// kScreenMargin sozinho colidia com o HUD nativo (vida/dinheiro/
+			// arma) que o proprio jogo desenha nesse canto - m_topReserve
+			// empurra o inicio da pilha pra baixo dele (ver setTopReserve()).
+			return kScreenMargin + m_topReserve;
 
 		case NotificationPosition::BottomLeft:
 		case NotificationPosition::BottomCenter:
@@ -124,10 +127,15 @@ void NotificationManager::layoutStack()
 		}
 	}
 	else {
-		for (auto& n : m_active) {
-			if (n.state == NotifState::Dead) continue;
-			n.targetY = y;
-			y += n.cachedHeight + m_spacing;
+		// no TOPO/CENTRO: a notificacao mais NOVA (fim do vetor, m_active
+		// preserva ordem de insercao) fica na "cabeca" da pilha, perto da
+		// margem/reserva - as mais antigas vao sendo empurradas pra BAIXO.
+		// (antes era o contrario: a mais antiga ficava fixa no topo e as
+		// novas entravam embaixo - trocado a pedido).
+		for (auto it = m_active.rbegin(); it != m_active.rend(); ++it) {
+			if (it->state == NotifState::Dead) continue;
+			it->targetY = y;
+			y += it->cachedHeight + m_spacing;
 		}
 	}
 }
@@ -386,7 +394,33 @@ void NotificationManager::draw(ImGuiRenderer* renderer)
 
 void NotificationManager::promoteFromQueue()
 {
-	while ((int) m_active.size() < m_maxVisible && !m_queue.empty()) {
+	while (!m_queue.empty()) {
+		// capacidade conta so quem esta "viva" de verdade (Entering/Showing)
+		// - uma que ja esta Exiting nao ocupa mais vaga, ela so continua
+		// desenhada ali pela animacao de saida (ver draw()). De quebra, essa
+		// varredura ja acha a mais antiga ainda viva (m_active preserva
+		// ordem de insercao, entao a primeira que bater e' ela).
+		int aliveCount = 0;
+		Notification* oldestAlive = nullptr;
+		for (auto& n : m_active) {
+			if (n.state == NotifState::Dead || n.state == NotifState::Exiting) continue;
+			aliveCount++;
+			if (oldestAlive == nullptr) oldestAlive = &n;
+		}
+
+		if (aliveCount >= m_maxVisible) {
+			// no limite (ex.: 4/4) - a mais antiga sai automaticamente pra
+			// abrir espaco pra essa nova, em vez de deixar a nova esperando
+			// na fila ate uma expirar sozinha. So marca Exiting aqui (ela
+			// ainda anima saindo por kExitAnimMs); no proximo update() ela
+			// ja nao entra mais em aliveCount e a promocao segue.
+			if (oldestAlive != nullptr) {
+				oldestAlive->state = NotifState::Exiting;
+				oldestAlive->animT = 0.0f;
+			}
+			break;
+		}
+
 		PendingNotification pending = m_queue.front();
 		m_queue.pop_front();
 

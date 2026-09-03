@@ -115,6 +115,15 @@ public:
 	void setProgressBarEnabled(bool enabled) { m_progressBarEnabled = enabled; }
 	void setSoundEnabled(bool enabled) { m_soundEnabled = enabled; }
 
+	// Espaco reservado no TOPO da tela (empurra o inicio da pilha pra baixo
+	// nas posicoes Top*), pra nao desenhar os cards por cima do HUD de
+	// vida/dinheiro/arma - esse HUD e' nativo do jogo (fora dessa arvore
+	// ImGui), entao nao da pra medir a altura dele automaticamente aqui.
+	// Ajustem esse valor (em px, mesma escala do resto do UI/UISettings) ate
+	// os cards ficarem logo ABAIXO do HUD nativo. So afeta TopLeft/TopCenter/
+	// TopRight - Bottom*/Center* ignoram (ver anchorYStart()).
+	void setTopReserve(float px) { m_topReserve = px < 0.0f ? 0.0f : px; }
+
 private:
 	enum class NotifState : uint8_t { Entering, Showing, Exiting, Dead };
 
@@ -182,6 +191,10 @@ private:
 	uint64_t m_lastUpdateMs = 0;
 
 	NotificationPosition m_position = NotificationPosition::TopRight;
+	// valor de partida - o HUD nativo (vida/dinheiro/arma) no canto superior
+	// direito, na referencia que voces mandaram, ocupa mais ou menos essa
+	// faixa. Ajustem com setTopReserve() se sobrar/faltar espaco no teste.
+	float m_topReserve = 190.0f;
 	int m_maxVisible = 4;
 	uint32_t m_defaultDurationMs = 4000;
 	float m_spacing = 14.0f;
