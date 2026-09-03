@@ -59,6 +59,7 @@ bool LoadBassLibrary()
 	BASS_ChannelStop = (int (*)(uint32_t))dlsym(v0, "BASS_ChannelStop");
 	BASS_StreamCreateURL = (int (*)(char*, uint32_t, uint32_t, uint32_t))dlsym(v0, "BASS_StreamCreateURL");
 	BASS_StreamCreate = (int (*)(uint32_t, uint32_t, uint32_t, STREAMPROC*, void*))dlsym(v0, "BASS_StreamCreate");
+	BASS_StreamCreateFile = (int (*)(bool, const void*, uint64_t, uint64_t, uint32_t))dlsym(v0, "BASS_StreamCreateFile");
 	BASS_ChannelPlay = (int (*)(uint32_t, bool))dlsym(v0, "BASS_ChannelPlay");
 	BASS_ChannelPause = (int (*)(uint32_t))dlsym(v0, "BASS_ChannelPause");
 	BASS_ChannelGetTags = (int*)dlsym(v0, "BASS_ChannelGetTags");
