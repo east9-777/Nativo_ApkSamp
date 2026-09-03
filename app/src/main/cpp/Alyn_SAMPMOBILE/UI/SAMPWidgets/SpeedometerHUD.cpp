@@ -90,10 +90,10 @@ void SpeedometerHUD::draw(ImGuiRenderer* renderer)
 
 	ImVec2 basePos = absolutePosition();
 
-	// Raios maiores e arcos mais grossos que a v1 - a v1 estava fina/pequena
-	// de mais numa tela de celular de verdade.
-	float radius = 150.0f;              // raio do arco principal (velocidade)
-	float outerRadius = radius + 34.0f; // raio dos arcos de vida/combustivel
+	// Grossura (thickness) ficou boa e foi mantida - so o DIAMETRO do
+	// velocimetro inteiro diminuiu (estava grande de mais na v2).
+	float radius = 108.0f;              // raio do arco principal (velocidade) - era 150
+	float outerRadius = radius + 26.0f; // raio dos arcos de vida/combustivel - era +34
 
 	ImVec2 center(basePos.x + outerRadius + 8.0f, basePos.y + outerRadius + 8.0f);
 

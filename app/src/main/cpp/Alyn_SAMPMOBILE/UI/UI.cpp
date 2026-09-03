@@ -101,12 +101,13 @@ bool UI::initialize()
 m_statusHud->setVisible(false);
 
 	// Velocimetro em arco (velocidade/vida do carro/combustivel), CENTRO
-	// inferior da tela (nao mais canto direito). Raio principal 150 + raio
-	// externo 184 (vida/combustivel) + folga => caixa de 400x400.
+	// inferior da tela. Raio principal 108 + raio externo 134 (vida/
+	// combustivel) + folga => caixa de 300x300, colada quase no rodape
+	// (margem de so 4px) pra ficar mais baixo, como pedido.
 	m_speedometerHud = new SpeedometerHUD();
 	this->addChild(m_speedometerHud);
-	m_speedometerHud->setSize(ImVec2(400.0f, 400.0f));
-	m_speedometerHud->setPosition(ImVec2((displaySize().x - 400.0f) / 2.0f, displaySize().y - 400.0f - 20.0f));
+	m_speedometerHud->setSize(ImVec2(300.0f, 300.0f));
+	m_speedometerHud->setPosition(ImVec2((displaySize().x - 300.0f) / 2.0f, displaySize().y - 300.0f - 4.0f));
 	// Mesmo motivo do m_statusHud acima: so aparece sozinho quando o ped
 	// local existir E estiver dentro de um veiculo (ver SpeedometerHUD::update()).
 	m_speedometerHud->setVisible(false);
