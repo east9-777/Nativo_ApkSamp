@@ -2276,10 +2276,85 @@ void ScrNativoNotificationShow(RPCParameters* rpcParams)
 		byteShowProgress != 0);
 }
 
+// RPC customizado, mesma familia do 220/221/222/223. Servidor manda o
+// client mostrar a tela de login/registro (LoginScreen, ver UI/SAMPWidgets/
+// LoginScreen.h) - substitui a textdraw antiga (ShowEnter/ShowRegister,
+// enter.pwn/register.pwn). Formato: uint8 modo (0 = Login, 1 = Register).
+static int RPC_NativoLoginAuthShow = 224;
+
+void ScrNativoLoginAuthShow(RPCParameters* rpcParams)
+{
+	auto Data = reinterpret_cast<unsigned char*>(rpcParams->input);
+	int iBitLength = rpcParams->numberOfBitsOfData;
+	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
+
+	unsigned char byteMode = 0;
+	bsData.Read(byteMode);
+
+	spdlog::info("ScriptRPC: ScrNativoLoginAuthShow mode={}", byteMode);
+
+	if (!pUI) return;
+
+	pUI->loginscreen()->show(byteMode == 0 ? LoginScreenMode::Login : LoginScreenMode::Register);
+}
+
+// RPC customizado, mesma familia do 220/221/222/223. Resultado do login
+// (depois do RPC_LOGIN_ATTEMPT abaixo) - sucesso fecha a tela, erro mostra
+// a mensagem. Formato: uint8 sucesso (0/1) + PR_STRING8 mensagem (so usada
+// no erro, ex.: "Senha incorreta.").
+static int RPC_NativoLoginResult = 226;
+
+void ScrNativoLoginResult(RPCParameters* rpcParams)
+{
+	auto Data = reinterpret_cast<unsigned char*>(rpcParams->input);
+	int iBitLength = rpcParams->numberOfBitsOfData;
+	RakNet::BitStream bsData(Data, (iBitLength / 8) + 1, false);
+
+	unsigned char byteSuccess = 0;
+	bsData.Read(byteSuccess);
+
+	// PR_STRING8: 1 byte de tamanho + N bytes de conteudo (mesmo formato
+	// ja usado em ScrNativoNotificationShow pro titulo/mensagem).
+	unsigned char byteMsgLen = 0;
+	char szMessage[128];
+	memset(szMessage, 0, sizeof(szMessage));
+	bsData.Read(byteMsgLen);
+	if (byteMsgLen > 0 && byteMsgLen < sizeof(szMessage)) {
+		bsData.Read(szMessage, byteMsgLen);
+	}
+
+	spdlog::info("ScriptRPC: ScrNativoLoginResult success={} msg='{}'", byteSuccess, szMessage);
+
+	if (!pUI) return;
+
+	pUI->loginscreen()->onLoginResult(byteSuccess != 0, std::string(szMessage));
+}
+
+// RPC customizado ENVIADO pelo client (nao recebido) - senha digitada no
+// LoginScreen. Chamado de LoginScreen::onEntrarClicked(). Mesmo formato
+// PR_STRING8 que o servidor le com BS_ReadValue(bs, PR_STRING8, ...) em
+// Login.pwn (RPC_LOGIN_ATTEMPT, IRPC:RPC_LOGIN_ATTEMPT).
+static int RPC_NativoLoginAttempt = 225;
+
+void Login_SendAttempt(const std::string& senha)
+{
+	if (!pNetGame || !pNetGame->GetRakClient()) return;
+
+	RakNet::BitStream bsSend;
+
+	unsigned char byteLen = (unsigned char) std::min<size_t>(senha.size(), 90);
+	bsSend.Write(byteLen);
+	bsSend.Write(senha.c_str(), byteLen);
+
+	pNetGame->GetRakClient()->RPC(&RPC_NativoLoginAttempt, &bsSend, HIGH_PRIORITY, RELIABLE_ORDERED, 0, false, UNASSIGNED_NETWORK_ID, nullptr);
+}
+
 void RegisterScriptRPCs(RakClientInterface* pRakClient)
 {
 	spdlog::info("Registering script RPC's..");
-
+	
+	pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoLoginAuthShow, ScrNativoLoginAuthShow);
+    pRakClient->RegisterAsRemoteProcedureCall(&RPC_NativoLoginResult, ScrNativoLoginResult);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetMapIcon, ScrSetPlayerMapIcon);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrDisableMapIcon, ScrRemovePlayerMapIcon);
 	pRakClient->RegisterAsRemoteProcedureCall(&RPC_ScrSetWeaponAmmo, ScrSetPlayerAmmo);

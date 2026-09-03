@@ -30,6 +30,11 @@
 // do Android. Sem isso, LoadIconTextureFromAsset sempre falha.
 void AssetImageLoader_SetAssetManager(AAssetManager* mgr);
 
+// Devolve o AssetManager ja registrado (ou nullptr se AssetImageLoader_SetAssetManager
+// ainda nao rodou) - pra outros loaders (ex.: audio da tela de login,
+// LoginScreen.cpp) reaproveitarem sem precisar de outro registro em Java.
+AAssetManager* AssetImageLoader_GetAssetManager();
+
 // Caminho relativo a app/src/main/assets/, ex: "hud/hud_vida.png".
 // Retorna um RwRaster* (compativel com ImTextureID) pronto pra ser usado no
 // drawImage()/AddImage() do ImGuiRenderer, ou nullptr se falhar ao carregar.

@@ -28,6 +28,7 @@
 #include "SAMPWidgets/StatusHUD.h"
 #include "SAMPWidgets/SpeedometerHUD.h"
 #include "SAMPWidgets/NotificationManager.h"
+#include "SAMPWidgets/LoginScreen.h"
 #include "SAMPWidgets/DebugLabels.h"
 #include "SAMPWidgets/DeathWindow.h"
 
@@ -51,6 +52,7 @@ public:
 	StatusHUD* statushud() const { return m_statusHud; }
 	SpeedometerHUD* speedometer() const { return m_speedometerHud; }
 	NotificationManager* notifications() const { return m_notificationManager; }
+	LoginScreen* loginscreen() const { return m_loginScreen; }
 	VoiceButton* voicebutton() const { return m_voiceButton; }
 	DebugLabels* debuglabels() const { return m_debugLabels; }
 	DeathWindow* deathwindow() const { return m_deathWindow; }
@@ -94,6 +96,7 @@ private:
 	StatusHUD* m_statusHud;
 	SpeedometerHUD* m_speedometerHud;
 	NotificationManager* m_notificationManager;
+	LoginScreen* m_loginScreen;
 	VoiceButton* m_voiceButton;
 	DebugLabels* m_debugLabels;
 	DeathWindow* m_deathWindow;

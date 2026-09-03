@@ -18,6 +18,11 @@ void AssetImageLoader_SetAssetManager(AAssetManager* mgr)
 	spdlog::info("AssetImageLoader: AssetManager registrado ({})", (void*) mgr);
 }
 
+AAssetManager* AssetImageLoader_GetAssetManager()
+{
+	return s_assetManager;
+}
+
 void* LoadIconTextureFromAsset(const char* assetRelativePath)
 {
 	if (assetRelativePath == nullptr) {

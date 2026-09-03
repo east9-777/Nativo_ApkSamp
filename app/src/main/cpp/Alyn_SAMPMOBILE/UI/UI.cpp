@@ -124,7 +124,17 @@ m_statusHud->setVisible(false);
 	m_notificationManager->setSize(displaySize());
 	m_notificationManager->setPosition(ImVec2(0.0f, 0.0f));
 	m_notificationManager->setVisible(false); // liga sozinho quando tiver alguma notificacao ativa (ver NotificationManager::update())
-
+	
+	// LoginScreen: cobre a tela inteira igual o NotificationManager (o
+	// fundo/logo preenchem toda a area) - comeca escondida, so aparece
+	// quando a GM manda RPC_LOGIN_AUTHSHOW (224, ver ScrNativoLoginAuthShow
+	// em ScriptRPC.cpp).
+	m_loginScreen = new LoginScreen();
+	this->addChild(m_loginScreen);
+	m_loginScreen->setSize(displaySize());
+	m_loginScreen->setPosition(ImVec2(0.0f, 0.0f));
+	m_loginScreen->setVisible(false);
+	
 	/*auto copyright = new Label(OBFUSCATE("Alyn_SAMPMOBILE"), ImColor(1.0f, 1.0f, 1.0f), true, UISettings::fontSize() / 3);
 	this->addChild(copyright);
 	copyright->setPosition(ImVec2(RsGlobal->maximumWidth * 0.83, ScaleY(5)));*/
