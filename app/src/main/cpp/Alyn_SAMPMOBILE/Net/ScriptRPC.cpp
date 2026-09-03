@@ -2211,7 +2211,7 @@ void ScrNativoVehicleFuel(RPCParameters* rpcParams)
 // (card estilo toast, ver UI/SAMPWidgets/NotificationManager.h) na tela do
 // player. NAO tem relacao com o Notification_Show/NotificationNT9 que ja
 // existe em outro lugar da GM de voces - esse aqui e' um sistema
-// independente, com nomenclatura propria do lado Pawn (ToastNotify_*/
+// independente, com nomenclatura propria do lado Pawn (ToastNotify_ /
 // ToastCategory, ver Toast.pwn) pra nunca colidir com aquele outro. Sem
 // titulo na chamada simples (ToastNotify_Show) porque o titulo padrao vem
 // da categoria no client; ToastNotify_ShowAdvanced no lado Pawn permite um

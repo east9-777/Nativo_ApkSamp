@@ -19,7 +19,7 @@
  * esse sistema NAO tem nenhuma relacao com o Notification_Show/
  * NotificationNT9 que ja existe em outro lugar da GM de voces - achei que
  * fossem a mesma coisa numa entrega anterior, mas nao sao (por isso o lado
- * Pawn usa nomenclatura ToastNotify_*/ToastCategory, pra nunca colidir com
+ * Pawn usa nomenclatura ToastNotify_ / ToastCategory, pra nunca colidir com
  * aquele outro sistema). O RPC 223 (ScrNativoNotificationShow em
  * Net/ScriptRPC.cpp) e' o unico ponto de entrada externo - o resto do APK
  * e a GM NUNCA mexem direto nos cards, so chamam show()/remove()/
