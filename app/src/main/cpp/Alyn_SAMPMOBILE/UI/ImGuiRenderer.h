@@ -19,6 +19,12 @@ public:
 	void drawConvexPolyFilled(ImVec2* points, int num_points, const ImColor& color);
 	void drawText(const ImVec2& pos, const ImColor& color, const std::string& text, bool outlined = false, float font_size = 0.0f, ImFont* font = nullptr);
 	void drawImage(const ImVec2& a, const ImVec2& b, ImTextureID texture);
+	// Overload com UV custom - necessario quando a textura RwRaster tem
+	// dimensoes maiores que o conteudo real (RW arredonda pra potencia de
+	// 2 ao carregar PNG/JPG NPOT, ver AssetImageLoader/RwImageFindRasterFormat).
+	// uv (0,0)-(1,1) cobre a textura inteira; passe uvMax menor que (1,1)
+	// pra mostrar so a fatia com conteudo real.
+	void drawImage(const ImVec2& a, const ImVec2& b, ImTextureID texture, const ImVec2& uvMin, const ImVec2& uvMax);
 
 	// HUD estilo hexagono (vida/colete/fome/sede): fundo solido + borda que
 	// preenche o perimetro do hexagono proporcional a um valor de 0.0 a 1.0.

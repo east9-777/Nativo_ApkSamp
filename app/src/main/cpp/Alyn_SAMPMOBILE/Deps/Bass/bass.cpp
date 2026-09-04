@@ -38,6 +38,8 @@ int (*BASS_ChannelIsActive) (uint32_t);
 int (*BASS_ChannelSlideAttribute) (uint32_t, uint32_t, float, uint32_t);
 int (*BASS_ChannelSet3DAttributes) (uint32_t, int, float, float, int, int, float);
 int (*BASS_StreamCreateFile) (bool, const void*, uint64_t, uint64_t, uint32_t);
+uint64_t (*BASS_ChannelGetPosition) (uint32_t, uint32_t);
+uint64_t (*BASS_ChannelGetLength) (uint32_t, uint32_t);
 int (*BASS_ChannelSet3DPosition) (uint32_t, const BASS_3DVECTOR*, const BASS_3DVECTOR*, const BASS_3DVECTOR*);
 int (*BASS_SetVolume) (float);
 
@@ -61,6 +63,8 @@ bool LoadBassLibrary()
 	BASS_StreamCreateURL = (int (*)(char*, uint32_t, uint32_t, uint32_t))dlsym(v0, "BASS_StreamCreateURL");
 	BASS_StreamCreate = (int (*)(uint32_t, uint32_t, uint32_t, STREAMPROC*, void*))dlsym(v0, "BASS_StreamCreate");
 	BASS_StreamCreateFile = (int (*)(bool, const void*, uint64_t, uint64_t, uint32_t))dlsym(v0, "BASS_StreamCreateFile");
+	BASS_ChannelGetPosition = (uint64_t (*)(uint32_t, uint32_t))dlsym(v0, "BASS_ChannelGetPosition");
+	BASS_ChannelGetLength = (uint64_t (*)(uint32_t, uint32_t))dlsym(v0, "BASS_ChannelGetLength");
 	BASS_ChannelPlay = (int (*)(uint32_t, bool))dlsym(v0, "BASS_ChannelPlay");
 	BASS_ChannelPause = (int (*)(uint32_t))dlsym(v0, "BASS_ChannelPause");
 	BASS_ChannelGetTags = (int*)dlsym(v0, "BASS_ChannelGetTags");

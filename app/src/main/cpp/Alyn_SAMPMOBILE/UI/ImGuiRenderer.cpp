@@ -256,6 +256,11 @@ void ImGuiRenderer::drawImage(const ImVec2& a, const ImVec2& b, ImTextureID text
 	m_drawList->AddImage(texture, a, b);
 }
 
+void ImGuiRenderer::drawImage(const ImVec2& a, const ImVec2& b, ImTextureID texture, const ImVec2& uvMin, const ImVec2& uvMax)
+{
+	m_drawList->AddImage(texture, a, b, uvMin, uvMax);
+}
+
 static void GetHexagonPoints(const ImVec2& center, float radius, ImVec2 out[6])
 {
 	// Hexagono "pontudo em cima" (vertice no topo, nao lado plano),

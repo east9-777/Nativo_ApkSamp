@@ -20,7 +20,9 @@ enum class LoginScreenMode {
 // Campo de senha - copia minima do EditBox (UI/Widgets/EditBox.h) mas com
 // mascara: guarda o texto real digitado, mostra so bullets no label. Nao
 // herda de EditBox porque os membros dele (m_label/m_input) sao privados,
-// sem gancho pra sobrescrever a exibicao.
+// sem gancho pra sobrescrever a exibicao. Visual proprio (caixa arredondada
+// escura + icone de cadeado) pra bater com o mockup - NAO reaproveita o
+// visual quadrado/contorno azul do EditBox generico usado no resto do app.
 class PasswordBox : public Widget {
 public:
 	PasswordBox();
@@ -36,6 +38,63 @@ public:
 private:
 	Label* m_maskLabel;
 	std::string m_input;
+};
+
+// Campo somente-leitura com o MESMO visual arredondado do PasswordBox
+// (icone de usuario a esquerda ao inves de cadeado) - usado pro nome de
+// usuario, que so mostramos (conta ja existe, nao da pra editar aqui).
+class ReadOnlyField : public Widget {
+public:
+	explicit ReadOnlyField(const std::string& text);
+
+	void setText(const std::string& text);
+
+	virtual void performLayout() override;
+	virtual void draw(ImGuiRenderer* renderer) override;
+
+private:
+	Label* m_label;
+};
+
+// Botao "pilula" arredondado dos botoes Entrar/Cadastrar-se do login.
+// primary=true preenche com a cor de destaque (Entrar), primary=false
+// desenha so um contorno claro semi-transparente (Cadastrar-se) - bate
+// com o mockup. Herda de Button so pra reaproveitar toda a logica de
+// touch/focus (Widget::touchEvent, ja testada) - o draw() e 100% proprio,
+// nao cai no retangulo azul-contornado generico de Button::draw().
+class PillButton : public Button {
+public:
+	PillButton(const std::string& caption, bool primary);
+
+	virtual void draw(ImGuiRenderer* renderer) override;
+
+private:
+	bool m_primary;
+};
+
+// Botao circular dos controles de musica (anterior/play-pause/proximo) -
+// desenha um icone vetorial (triangulo/barras/chevron duplo) ao inves de
+// reciclar o retangulo com contorno azul do Button padrao. So o play/pause
+// tem fundo (circulo solido); anterior/proximo ficam so o icone, sem caixa
+// nenhuma - e exatamente essa caixa que deixava os controles "feios/
+// reciclados do proprio APK".
+enum class PlayerIconKind {
+	Prev,
+	Play,
+	Pause,
+	Next
+};
+
+class PlayerIconButton : public Button {
+public:
+	explicit PlayerIconButton(PlayerIconKind kind);
+
+	void setKind(PlayerIconKind kind) { m_kind = kind; }
+
+	virtual void draw(ImGuiRenderer* renderer) override;
+
+private:
+	PlayerIconKind m_kind;
 };
 
 // Um "card" de musica (capa + titulo + artista), metadados fixos - ver
@@ -75,19 +134,23 @@ private:
 	LoginScreenMode m_mode;
 	std::string m_errorMessage;
 
-	Label* m_titleLabel;      // usuario (read-only, Settings::nick())
+	Label* m_welcomeLabel;   // "Bem-vindo, jogador caro!"
+	Label* m_subtitleLabel;  // "Para acessar o servidor, faca seu login abaixo"
+
+	ReadOnlyField* m_usernameField; // usuario (read-only, Settings::nick())
 	PasswordBox* m_passwordBox;
 	Label* m_errorLabel;
-	Button* m_entrarButton;
-	Button* m_cadastrarButton;
+	PillButton* m_entrarButton;
+	PillButton* m_cadastrarButton;
 	Label* m_registerInfoLabel; // aviso "registre-se pelo discord" (modo Register)
 
 	// Mini player de musica
 	Label* m_trackTitleLabel;
 	Label* m_trackArtistLabel;
-	Button* m_playPauseButton;
-	Button* m_nextButton;
-	Button* m_prevButton;
+	PlayerIconButton* m_playPauseButton;
+	PlayerIconButton* m_nextButton;
+	PlayerIconButton* m_prevButton;
+	ProgressBar* m_musicProgressBar; // preenchimento = posicao real da faixa (BASS_ChannelGetPosition/GetLength)
 	int m_trackIndex;
 	bool m_playing;
 

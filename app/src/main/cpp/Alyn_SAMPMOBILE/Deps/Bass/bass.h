@@ -997,6 +997,8 @@ extern int (*BASS_ChannelStop) (uint32_t);
 extern int (*BASS_StreamCreateURL) (char*, uint32_t, uint32_t, uint32_t);
 extern int (*BASS_StreamCreate) (uint32_t, uint32_t, uint32_t, STREAMPROC*, void*);
 extern int (*BASS_StreamCreateFile) (bool, const void*, uint64_t, uint64_t, uint32_t);
+extern uint64_t (*BASS_ChannelGetPosition) (uint32_t, uint32_t);
+extern uint64_t (*BASS_ChannelGetLength) (uint32_t, uint32_t);
 extern int (*BASS_ChannelPlay) (uint32_t, bool);
 extern int (*BASS_ChannelPause) (uint32_t);
 extern int* BASS_ChannelGetTags;
